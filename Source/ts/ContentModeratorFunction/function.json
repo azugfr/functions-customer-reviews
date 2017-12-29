@@ -1,0 +1,40 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "queueInput",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "review-queue",
+      "connection": "AzureWebJobsStorage"
+    },
+    {
+      "name": "image",
+      "type": "blob",
+      "dataType": "binary",
+      "direction": "in",
+      "path": "input-images/{BlobName}",
+      "connection": "AzureWebJobsStorage"
+    },
+    {
+      "type": "documentDB",
+      "name": "inputDocumentIn",
+      "direction": "in",
+      "databaseName": "customerReviewData",
+      "collectionName": "reviews",
+      "id": "{DocumentId}",
+      "partitionKey": "Reviews",
+      "connection": "customerReviewDataDocDB"
+    },
+    {
+      "type": "documentDB",
+      "name": "inputDocumentOut",
+      "direction": "out",
+      "databaseName": "customerReviewData",
+      "collectionName": "reviews",
+      "createIfNotExists": false,
+      "partitionKey": "Reviews",
+      "connection": "customerReviewDataDocDB"
+    }
+  ]
+}
