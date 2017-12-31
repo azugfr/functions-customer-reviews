@@ -8,7 +8,7 @@ export async function run(context: any, queueInput: any, image: any, inputDocume
 
     context.bindings.inputDocumentOut = inputDocumentIn;
 
-    let imageInformation = await analyzeImage(context.bindings.image);
+    let imageInformation = await analyzeImage(image);
 
     context.bindings.inputDocumentOut.IsApproved = imageInformation[1] && passesText;
     context.bindings.inputDocumentOut.Caption = imageInformation[0];
