@@ -21,7 +21,7 @@
             "kind": "ComputerVision",
             "name": "[concat(parameters('unique_name'),'computervision')]",
             "apiVersion": "2016-02-01-preview",
-            "location": "westus",
+            "location": "[resourceGroup().location]",
             "properties": {},
             "dependsOn": []
         },
@@ -33,7 +33,7 @@
             "kind": "ContentModerator",
             "name": "[concat(parameters('unique_name'),'contentmoderator')]",
             "apiVersion": "2016-02-01-preview",
-            "location": "westus",
+            "location": "[resourceGroup().location]",
             "properties": {},
             "dependsOn": []
         },
@@ -42,7 +42,7 @@
             "kind": "GlobalDocumentDB",
             "name": "[variables('DocumentDBName')]",
             "apiVersion": "2015-04-08",
-            "location": "West US",
+            "location": "[resourceGroup().location]",
             "tags": {},
             "properties": {
                 "databaseAccountOfferType": "Standard",
@@ -64,7 +64,7 @@
             "kind": "Storage",
             "name": "[variables('StorageAccountName')]",
             "apiVersion": "2016-01-01",
-            "location": "westus",
+            "location": "[resourceGroup().location]",
             "tags": {},
             "properties": {},
             "dependsOn": []
@@ -81,7 +81,7 @@
             "kind": "app",
             "name": "[concat(parameters('unique_name'),'farm')]",
             "apiVersion": "2015-08-01",
-            "location": "West US",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "name": "[concat(parameters('unique_name'),'farm')]",
                 "numberOfWorkers": 1
@@ -93,7 +93,7 @@
             "kind": "other",
             "name": "[variables('AppInsightsInstanceName')]",
             "apiVersion": "2014-04-01",
-            "location": "southcentralus",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "ApplicationId": "[variables('AppInsightsInstanceName')]"
             },
@@ -104,7 +104,7 @@
             "kind": "app",
             "name": "[concat(parameters('unique_name'),'site')]",
             "apiVersion": "2015-08-01",
-            "location": "West US",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "name": "[concat(parameters('unique_name'),'site')]",
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]"
