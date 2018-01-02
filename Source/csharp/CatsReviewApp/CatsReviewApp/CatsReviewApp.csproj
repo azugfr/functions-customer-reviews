@@ -27,6 +27,7 @@
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId>/subscriptions/e7e4debd-456e-45a8-8bec-ccb824b1f34c/resourcegroups/Reviews/providers/microsoft.insights/components/ImageReview</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/e7e4debd-456e-45a8-8bec-ccb824b1f34c/resourcegroups/Reviews/providers/microsoft.insights/components/ImageReview</ApplicationInsightsAnnotationResourceId>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -200,6 +201,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
+    <None Include="Properties\PublishProfiles\amredtshirttoursite - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\nzthicreviwsite - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\revnzthbsite - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\revnzthisite - Web Deploy.pubxml" />

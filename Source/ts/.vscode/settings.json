@@ -1,0 +1,4 @@
+{
+    "azureFunctions.projectLanguage": "TypeScript",
+    "azureFunctions.projectRuntime": "~1"
+}
