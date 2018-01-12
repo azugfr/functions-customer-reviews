@@ -50,9 +50,8 @@ The first step in writing an Azure Function is to create an Azure Function App. 
 
 1. Open the [Azure Portal](https://portal.azure.com) in your browser. If asked to log in, do so using your Microsoft account.
 
-2. Click **+ New**, followed by **Compute** and **Function App**.
+2. Click **+ New**, followed by **Get Started** and **Serverless Function App**.
 
-    ![Creating an Azure Function App](Images/new-function-app.png)
 
     _Creating an Azure Function App_
 
@@ -130,114 +129,33 @@ Once you have created an Azure Function App, you can add Azure Functions to it. 
 1. Replace the code shown in the code editor with the following statements:
 
 	```C#
-	using Microsoft.WindowsAzure.Storage.Blob;
-	using Microsoft.WindowsAzure.Storage;
-	using System.Net.Http.Headers;
-	using System.Configuration;
-	
-	public async static Task Run(Stream myBlob, string name, TraceWriter log)
-	{       
-	    log.Info($"Analyzing uploaded image {name} for adult content...");
-	
-	    var array = await ToByteArrayAsync(myBlob);
-	    var result = await AnalyzeImageAsync(array, log);
-	    
-	    log.Info("Is Adult: " + result.adult.isAdultContent.ToString());
-	    log.Info("Adult Score: " + result.adult.adultScore.ToString());
-	    log.Info("Is Racy: " + result.adult.isRacyContent.ToString());
-	    log.Info("Racy Score: " + result.adult.racyScore.ToString());
-	
-	    if (result.adult.isAdultContent || result.adult.isRacyContent)
-	    {
-	        // Copy blob to the "rejected" container
-	        StoreBlobWithMetadata(myBlob, "rejected", name, result, log);
-	    }
-	    else
-	    {
-	        // Copy blob to the "accepted" container
-	        StoreBlobWithMetadata(myBlob, "accepted", name, result, log);
-	    }
-	}
-	
-	private async static Task<ImageAnalysisInfo> AnalyzeImageAsync(byte[] bytes, TraceWriter log)
-	{
-	    HttpClient client = new HttpClient();
-	
-	    var key = ConfigurationManager.AppSettings["SubscriptionKey"].ToString();
-	    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key);
-	
-	    HttpContent payload = new ByteArrayContent(bytes);
-	    payload.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
-	    
-	    var results = await client.PostAsync("https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze?visualFeatures=Adult", payload);
-	    var result = await results.Content.ReadAsAsync<ImageAnalysisInfo>();
-	    return result;
-	}
-	
-	// Writes a blob to a specified container and stores metadata with it
-	private static void StoreBlobWithMetadata(Stream image, string containerName, string blobName, ImageAnalysisInfo info, TraceWriter log)
-	{
-	    log.Info($"Writing blob and metadata to {containerName} container...");
-	    
-	    var connection = ConfigurationManager.AppSettings["AzureWebJobsStorage"].ToString();
-	    var account = CloudStorageAccount.Parse(connection);
-	    var client = account.CreateCloudBlobClient();
-	    var container = client.GetContainerReference(containerName);
-	
-	    try
-	    {
-	        var blob = container.GetBlockBlobReference(blobName);
-	    
-	        if (blob != null) 
-	        {
-	            // Upload the blob
-	            blob.UploadFromStream(image);
-	
-	            // Get the blob attributes
-	            blob.FetchAttributes();
-	            
-	            // Write the blob metadata
-	            blob.Metadata["isAdultContent"] = info.adult.isAdultContent.ToString(); 
-	            blob.Metadata["adultScore"] = info.adult.adultScore.ToString("P0").Replace(" ",""); 
-	            blob.Metadata["isRacyContent"] = info.adult.isRacyContent.ToString(); 
-	            blob.Metadata["racyScore"] = info.adult.racyScore.ToString("P0").Replace(" ",""); 
-	            
-	            // Save the blob metadata
-	            blob.SetMetadata();
-	        }
-	    }
-	    catch (Exception ex)
-	    {
-	        log.Info(ex.Message);
-	    }
-	}
-	
-	// Converts a stream to a byte array
-	private async static Task<byte[]> ToByteArrayAsync(Stream stream)
-	{
-	    Int32 length = stream.Length > Int32.MaxValue ? Int32.MaxValue : Convert.ToInt32(stream.Length);
-	    byte[] buffer = new Byte[length];
-	    await stream.ReadAsync(buffer, 0, length);
-	    stream.Position = 0;
-	    return buffer;
-	}
+#r "System.IO"
+using Microsoft.ProjectOxford.Vision;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
+using System;
 
-	public class ImageAnalysisInfo
-	{
-	    public Adult adult { get; set; }
-	    public string requestId { get; set; }
-	}
-	
-	public class Adult
-	{
-	    public bool isAdultContent { get; set; }
-	    public bool isRacyContent { get; set; }
-	    public float adultScore { get; set; }
-	    public float racyScore { get; set; }
-	}
+
+public async static Task Run(Stream myBlob, Stream outputBlob,string name, CancellationToken token, TraceWriter log)
+{
+    
+    log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");
+    VisualFeature[] VisualFeatures = { VisualFeature.Description };
+    var key =Environment.GetEnvironmentVariable("SUBSCRIPTION_KEY").ToString();
+    var searchCatTag = "cat";
+
+    var vsClient = new VisionServiceClient(key);
+    var result = await vsClient.AnalyzeImageAsync(myBlob, VisualFeatures);
+    myBlob.Position = 0;
+    bool containsCat = result.Description.Tags.Contains(searchCatTag);
+    log.Info(containsCat.ToString());
+    if(containsCat)
+    {
+        await myBlob.CopyToAsync(outputBlob, 4096, token);
+    }
+}
 	```
-
-	> **Run** is the method called each time the function is executed. The **Run** method uses a helper method named **AnalyzeImageAsync** to pass each blob added to the "uploaded" container to the Computer Vision API for analysis. Then it calls a helper method named **StoreBlobWithMetadata** to create a copy of the blob in either the "accepted" container or the "rejected" container, depending on the scores returned by **AnalyzeImageAsync**. 
 
 1. Click the **Save** button at the top of the code editor to save your changes. Then click **View files**.
 
@@ -257,7 +175,7 @@ Once you have created an Azure Function App, you can add Azure Functions to it. 
 	{
 	    "frameworks": {
 	        "net46": {
-	            "dependencies": {
+	            "dependencies": {					"Microsoft.ProjectOxford.Vision": "1.0.393",
 	                "WindowsAzure.Storage": "7.2.0"
 	            }
 	        }
