@@ -63,8 +63,8 @@ In this exercise, you will create an Azure Function App using Azure Functions CL
 1. Create a new folder and initialize an Azure Function by doing the following from a command prompt:
 
 	```
-	mkdir redtshirtour
-	cd redtshirtour
+	mkdir RedShirtTour
+	cd RedShirtTour
 	func init
 	```
 
