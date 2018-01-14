@@ -114,7 +114,7 @@ Once you have created an Azure Function App, you can add Azure Functions to it. 
 
     _Adding a function_
 
-1. Set **Language** to **C#**. Then click **BlobTrigger-CSharp**.
+1. Enter "Blob trigger" in **Search** box. Then click **C#**.
   
     ![Selecting a function template](Images/cs-select-template.png)
 
@@ -142,7 +142,7 @@ public async static Task Run(Stream myBlob, Stream outputBlob,string name, Cance
     
     log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");
     VisualFeature[] VisualFeatures = { VisualFeature.Description };
-    var key =Environment.GetEnvironmentVariable("SUBSCRIPTION_KEY").ToString();
+    var key =Environment.GetEnvironmentVariable("SubscriptionKey").ToString();
     var searchCatTag = "cat";
 
     var vsClient = new VisionServiceClient(key);
@@ -214,7 +214,7 @@ The Azure Function you created in [Exercise 2](#Exercise2) loads a subscription 
 
     _Opening the Computer Vision API subscription_
 
-1. Click **Show access keys**.
+1. Click **Overview** in left pane. Click **Show access keys**.
 
     ![Viewing the access keys](Images/show-access-keys.png)
 
