@@ -35,7 +35,7 @@ Notes:
 
 Follow these instructions to get your Azure subscription set up. 
 
-- Edit the ``parameters.json`` file under the ``\Provision\assets`` folder and set the value of ``unique_name`` to a short unique value. This will be used for all asset names (cognitive services, storage accounts, web app and service plan, documentDB) so make sure it's unique:
+- Edit the ``parameters.json`` file under the ``\Provision\assets`` folder and set the value of ``unique_name`` to a short unique value. This will be used for all asset names (cognitive services, storage accounts, web app and service plan, documentDB) so make sure it's unique, only use lower case characters, type between 4 - 8 alpahnumerical characters :
 
 ![](Media/Setup1.png)
 
@@ -65,7 +65,7 @@ Notes:
 Now that you have created the resource group with all the assets on your Azure subscription, populate the CosmosDB database and Storage account with some initial data:
 
 - Open the ``config.xml`` file in the ``\Reset`` folder and edit the values for the following (from the assets you just deployed to your Azure Subscription):
-    - ``storageConnectionString`` (Storage accounts > [uniquename]stor > Access Keys)
+    - ``storageConnectionString`` (Storage accounts > [uniquename]stor > Access Keys > column Connection string)
     - ``documentDbEndpoint`` (Azure Cosmos DB > [uniquename]docdb > Keys > URI)
     - ``documentDbKey`` (Azure Cosmos DB > [uniquename]docdb > Keys > Primary Key)
 
