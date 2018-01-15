@@ -138,7 +138,7 @@ using System.Linq;
 using System;
 
 
-public async static Task Run(Stream myBlob, Stream outputBlob,string name, CancellationToken token, TraceWriter log)
+public async static Task Run(Stream myBlob, Stream acceptedBlob, Stream rejectedBlob,string name, CancellationToken token, TraceWriter log)
 {
     
     log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");
@@ -153,7 +153,11 @@ public async static Task Run(Stream myBlob, Stream outputBlob,string name, Cance
     log.Info(containsCat.ToString());
     if(containsCat)
     {
-        await myBlob.CopyToAsync(outputBlob, 4096, token);
+        await myBlob.CopyToAsync(acceptedBlob, 4096, token);
+    }
+    else
+    {
+        await myBlob.CopyToAsync(rejectedBlob, 4096, token);
     }
 }
 ```
