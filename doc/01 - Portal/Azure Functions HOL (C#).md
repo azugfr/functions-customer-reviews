@@ -8,7 +8,7 @@
 
 Functions have been the basic building blocks of software since the first lines of code were written and the need for code organization and reuse became a necessity. Azure Functions expand on these concepts by allowing developers to create "serverless", event-driven functions that run in the cloud and can be shared across a wide variety of services and systems, uniformly managed, and easily scaled based on demand. In addition, Azure Functions can be written in a variety of languages, including C#, JavaScript, Python, Bash, and PowerShell, and they're perfect for building apps and nanoservices that employ a compute-on-demand model.
 
-In this lab, you will create an Azure Function that monitors a blob container in Azure Storage for new images, and then performs automated analysis of the images using the Microsoft Cognitive Services [Computer Vision API](https://www.microsoft.com/cognitive-services/en-us/computer-vision-api). Specifically, The Azure Function will analyze each image that is uploaded to the container for adult or racy content and create a copy of the image in another container. Images that contain adult or racy content will be copied to one container, and images that do not contain adult or racy content will be copied to another. In addition, the scores returned by the Computer Vision API will be stored in blob metadata.
+In this lab, you will create an Azure Function that monitors a blob container in Azure Storage for new images, and then performs automated analysis of the images using the Microsoft Cognitive Services [Computer Vision API](https://www.microsoft.com/cognitive-services/en-us/computer-vision-api). Specifically, The Azure Function will analyze each image that is uploaded to the container for cats content and create a copy of the image in another container. Images that contain cat content will be copied to one container.
 
 <a name="Objectives"></a>
 ### Objectives ###
@@ -128,7 +128,8 @@ Once you have created an Azure Function App, you can add Azure Functions to it. 
 
 1. Replace the code shown in the code editor with the following statements:
 
-	```C#
+
+```C#
 #r "System.IO"
 using Microsoft.ProjectOxford.Vision;
 using System.Threading;
@@ -155,7 +156,8 @@ public async static Task Run(Stream myBlob, Stream outputBlob,string name, Cance
         await myBlob.CopyToAsync(outputBlob, 4096, token);
     }
 }
-	```
+```
+
 
 1. Click the **Save** button at the top of the code editor to save your changes. Then click **View files**.
 
@@ -188,6 +190,11 @@ public async static Task Run(Stream myBlob, Stream outputBlob,string name, Cance
     ![Saving the project file](Images/cs-save-project-file.png)
 
     _Saving the project file_
+
+Add a new output to your function use acceptedBlob as your Blob Parameter Name and accepted for your path, and save this new output. 
+Repeat this steps to add an another output with rejectedBlob as your Parameter Name and rejected for your path and save this new output. 
+
+![Adding An Ouput](Images/add-output.png)
 
 An Azure Function written in C# has been created, complete with a JSON project file containing information regarding project dependencies. The next step is to add an application setting that the Azure Function relies on.
 
@@ -309,40 +316,6 @@ Your function is configured to listen for changes to the blob container named "u
 
 The presence of seven images in the "accepted" container and one in the "rejected" container is proof that your Azure Function executed each time an image was uploaded to the "uploaded" container. If you would like, return to the BlobImageAnalysis function in the portal and click **Monitor**. You will see a log detailing each time the function executed.
 
-<a name="Exercise5"></a>
-## Exercise 5: View blob metadata (optional) ##
-
-What if you would like to view the scores for adult content and raciness returned by the Computer Vision API for each image uploaded to the "uploaded" container? The scores are stored in blob metadata for the images in the "accepted" and "rejected" containers, but blob metadata can't be viewed through the Azure Portal.
-
-In this exercise, you will use the cross-platform [Microsoft Azure Storage Explorer](http://storageexplorer.com) to view blob metadata and see how the Computer Vision API scored the images you uploaded.
-
-1. If you haven't installed the Microsoft Azure Storage Explorer, go to http://storageexplorer.com and install it now. Versions are available for Windows, macOS, and Linux.
-
-1. Start Storage Explorer. If you are asked to log in, do so using the same account you used to log in to the Azure Portal.
-
-1. Find the storage account that was created for your Azure Function App in [Exercise 1](#Exercise1) and expand the list of blob containers underneath it. Then click the container named "rejected."
-
-	> If this is the first time you have run Storage Explorer, you may have to click the person icon and tell it which Azure subscription or subscriptions you want it to display. 
-
-    ![Opening the "rejected" container](Images/explorer-open-rejected-container.png)
-
-    _Opening the "rejected" container_
-
-1. Right-click (on a Mac, Command-click) the image in the "rejected" container and select **Properties** from the context menu.
-
-    ![Viewing blob metadata](Images/explorer-view-blob-metadata.png)
-
-    _Viewing blob metadata_
-
-1. Inspect the blob's metadata. *IsAdultContent* and *isRacyContent* are Boolean values that indicate whether the Computer Vision API detected adult or racy content in the image. *adultScore* and *racyScore* are the computed probabilities.
-
-    ![Scores returned by the Computer Vision API](Images/explorer-metadata-values.png)
-
-    _Scores returned by the Computer Vision API_
-
-1. Open the "accepted" container and inspect the metadata for some of the blobs stored there. How do these metadata values differ from the ones attached to the blob in the "rejected" container?
-
-You can probably imagine how this might be used in the real world. Suppose you were building a photo-sharing site and wanted to prevent adult images from being stored. You could easily write an Azure Function that inspects each image that is uploaded and deletes it from storage if it contains adult content.
 
 <a name="Summary"></a>
 ## Summary ##
@@ -356,6 +329,7 @@ In this hands-on lab you learned how to:
 
 This is just one example of how you can leverage Azure Functions to automate repetitive tasks. Experiment with other Azure Function templates to learn more about Azure Functions and to identify additional ways in which they can aid your research or business.
 
----
-
+--
+Modified by Aymeric Weinbach for AzugFr
+For RedShirtTour 2018
 Copyright 2016 Microsoft Corporation. All rights reserved. Except where otherwise noted, these materials are licensed under the terms of the MIT License. You may use them according to the license as is most appropriate for your project. The terms of this license can be found at https://opensource.org/licenses/MIT.
