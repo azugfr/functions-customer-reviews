@@ -1,5 +1,5 @@
 <a name="HOLTitle"></a>
-# Provision Customer Reviews Services and Reset datas#
+# Provision Customer Reviews assets and Reset datas#
 
 ---
 
@@ -8,19 +8,15 @@
 
 Azure Resource Manager helps automate the provisionning of a lot of resources in Azure.
 
-In this lab, you will create the needed Azure Services for to run CustomerReviews web site and his automatic moderation with Cognitives Services. You will also add images to populate CustomerReviews site.
+In this lab, you will create the needed assets for to run CustomerReviews web site and his automatic moderation with Cognitives Services. You will also add images to populate CustomerReviews site.
 
 <a name="Objectives"></a>
 ### Objectives ###
 
 In this hands-on lab, you will learn how to:
 
-- Create Azure Services for labs 02 and 03
-   + storage account 
-   + DocumentDb database
-   + Cognitives Services
-   + Application Service
-   + Azure Functions 
+- Create Azure Services reuired for [lab 02](../02 - Visual Studio) and [lab 03](../03 - Continuous Delivery)
+   + Storage account, DocumentDb, Cognitives Services,  Application Service, Azure Functions 
 - Deploy Web site of CutomerReviews
 - Set images data in storage and Document
 
@@ -44,7 +40,7 @@ This hands-on lab includes the following exercises:
 - [Exercise 3: Create services with Azure Resource Manager template](#Exercise3)
 - [Exercise 4: Add images to CustomerReviews site (Reset datas)](#Exercise4)
 
-Estimated time to complete this lab: **20** minutes.
+Estimated time to complete this lab: **30** minutes.
 
 <a name="Exercise1"></a>
 ## Exercise 1: Create an Azure Cloud Shell (PowerShell) ##
@@ -53,131 +49,196 @@ The first step in .... In this exercise, you will create .....
 
 1. Open the [Azure Portal](https://portal.azure.com) in your browser. If asked to log in, do so using your Microsoft account.
 
-1. Click **Cloud Shell** button on top of page
-   
+2. Click **Cloud Shell** button on top of page
+
     ![Open Cloud Shell](Images/open-cloud-shell.png)
 
-	> A banner appear on the back of web page 
-     
-1. Click **PowerShell (Windows)**
+    > A banner appear on the back of web page 
+
+3. Click **PowerShell (Windows)**
 
     ![Select PowerShell](Images/select-powershell-windows.png)
 
-1. Select your subscription, and Click on **Create storage**. This will create a new storage account for you and create a file share to persist files.
-   
+4. Select your subscription, and Click on **Create storage**. This will create a new storage account for you and create a file share to persist files.
+
     ![Create default storage](Images/create-default-storage.png)
 
-1. Your Cloud Shell be ready in a few minutes .
+5. Your Azure Cloud Shell be ready in a few minutes . Verify taht you choose Powershell. You can swith between Bash and Powershell in the Dropdown
 
     ![Connecting Cloud Shell](Images/connecting-cloud-powershell.png)
-	
+
 The Azure Cloud Shell is a windows container. A new one will be started with your CloudDrive mapped as a volume. And you will be connected to your Azure current subscription. has been created and you have added three containers to the storage account created for it. The next step is to get code from this repo.
 
-TODO: sample: 1. Repeat Step 7 to add containers named "accepted" and "rejected" to blob storage.
-TODO: next exercises
+
 
 <a name="Exercise2"></a>
 ## Exercise 2: Fork and Clone GitHub repo ##
 
-Once you have created an Azure Function App, you can add Azure Functions to it. In this exercise, you will add a function to the Function App you created in [Exercise 1](#Exercise1) and write C# code that uses the [Computer Vision API](https://www.microsoft.com/cognitive-services/en-us/computer-vision-api) to analyze images added to the "uploaded" container for adult or racy content.
+Once you have created an Azure Cloud Shell, you can you can use Powershell, commands, and some other SDK or application installed on it. In this exercise, you will clone the git repo into a persistent volume _CloudDrive_ . This will allow you to get all the scripts necessary to create the assets. 
 
-1. Return to the blade for the "FunctionsLabResourceGroup" resource group and click the Azure Function App that you created in [Exercise 1](#Exercise1). 
+1. Type these commands to navigate to your CloudDrive and clone this git repository.
 
-    ![Opening the Function App](Images/open-function-app.png)
+    > Copy and paste in Azure Cloud Shell
+    >
+    > - Windows: `Ctrl-insert` to copy and `Shift-insert` to paste. Right-click dropdown can also enable copy/paste.
+    >   - FireFox/IE may not support clipboard permissions properly.
+    > - Mac OS: `Cmd-c` to copy and `Cmd-v` to paste. Right-click dropdown can also enable copy/paste.
 
-    _Opening the Function App_
+    ```powershell
+    cd C:\users\ContainerAdministrator\CloudDrive
+    git clone --depth 1 --single-branch https://github.com/azugfr/functions-customer-reviews.git
+    ```
 
-	
-3. Enter an app name that is unique within Azure. Under **Resource Group**, select **Create new** and enter "FunctionsLabResourceGroup" (without quotation marks) as the resource-group name to create a resource group for the Function App. Choose the **Location** nearest you, and accept the default values for all other parameters. Then click **Create** to create a new Function App.
+    > _-depth 1 --single-branch_ options will limit download to the tip of master branch. The full history will not be downloaded. 
 
-	> The app name becomes part of a DNS name and therefore must be unique within Azure. Make sure a green check mark appears to the name indicating it is unique. You probably **won't** be able to use "functionslab" as the app name.
-    
-	![Creating a Function App](Images/function-app-name.png)
+    ![cloning the git repo](Images/git-clone-functions-repo.png)
 
-    _Creating a Function App_
+    ​
 
-1. Replace the code shown in the code editor with the following statements:
+2.  Type this command to navigate inside the repo and list content.  
 
+    ```powershell
+    cd .\functions-customer-reviews\
+    ls
+    ```
 
-```C#
-#r "System.IO"
-using Microsoft.ProjectOxford.Vision;
-public async static Task Run(Stream myBlob, Stream acceptedBlob, Stream rejectedBlob,string name, CancellationToken token, TraceWriter log)
-{
-    
-    log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");
-    VisualFeature[] VisualFeatures = { VisualFeature.Description };
- 
-}
-```
+    ![List content of repo](Images/list-functions-repo-content.png)
 
 
-1. Click the **Save** button at the top of the code editor to save your changes. Then click **View files**.
 
-    ![Saving the function](Images/cs-save-run-csx.png)
-
-    _Saving the function_
-
-1. Add the following statements to **project.json**:
-
-	```json
-	{
-	    "frameworks": {
-	        "net46": {
-	            "dependencies": {					"Microsoft.ProjectOxford.Vision": "1.0.393",
-	                "WindowsAzure.Storage": "7.2.0"
-	            }
-	        }
-	    }
-	}
-	```
-
-Add a new output to your function use acceptedBlob as your Blob Parameter Name and accepted for your path, and save this new output. 
-Repeat this steps to add an another output with rejectedBlob as your Parameter Name and rejected for your path and save this new output. 
-
-![Adding An Ouput](Images/add-output.png)
-
-An Azure Function written in C# has been created, complete with a JSON project file containing information regarding project dependencies. The next step is to add an application setting that the Azure Function relies on.
+The folders doc and Media contains images and instructions for differents labs and demo. Source contains source code of the sample. Provision folder contains the scripts to create assets required for [lab 02](../02 - Visual Studio) and [lab 03](../03 - Continuous Delivery). Reset folder contains the scripts to clean up and pre filled images . The next step is to create the assets that the Customer Reviews solution relies on.
 
 <a name="Exercise3"></a>
-## Exercise 3: Create services with Azure Resource Manager template ##
+## Exercise 3: Create assets with Azure Resource Manager template ##
 
-The Azure Function you created in [Exercise 2](#Exercise2) loads a subscription key for the Microsoft Cognitive Services Computer Vision API from application settings. This key is required in order for your code to call the Computer Vision API, and is transmitted in an HTTP header in each call. In this exercise, you will subscribe to the Computer Vision API, and then add an access key for the subscription to application settings.
+The`Provision` folder contains a Azure Resource Manager template file [Provision\assets\template.json](). This file describe all the to be created Azure assets:
 
-1. In the Azure Portal, click **+ New**, followed by **AI + Cognitive Services** and **Computer Vision API**.
+* Storage account
+* DocumentDB  
+* Cognitives Services Computer Vision (Image analysis)
+* Cognitives Services Content Moderator (Text analysis)
+* Azure Web Site
+* Application Insights
+* Azure Functions 
 
-    ![Creating a new Computer Vision API subscription](Images/new-vision-api.png)
+In this exercise, you will create these assets.
 
-    _Creating a new Computer Vision API subscription_
+1. In the Azure Cloud Shell, type this command to open the `parameters.jso` file in `vim`. 
 
-1. Enter "VisionAPI" into the **Name** box and select **F0** as the **Pricing tier**. Under **Resource Group**, select **Use existing** and select the "FunctionsLabResourceGroup" that you created for the Function App in Exercise 1. Check the **I confirm** box, and then click **Create**.
+    ```powershell
+    vim ./Provision/assets/parameters.json
+    ```
 
-    ![Subcribing to the Computer Vision API](Images/create-vision-api.png)
+    > `vim` essentials : [quick reference card](http://users.ece.utexas.edu/~adnan/vimqrc.html)
+    >
+    > * `x` to delete characters
+    > * `i` to insert characters
+    > * `Esc` to get out of insertin mode
+    > * `:qn` to save and exit
+    > * `!:q` to exit without saving
 
-    _Subcribing to the Computer Vision API_
+    ![parameters.json before](Images/parameters-json-before.png)
+
+2. Select first letter of **UNIQUE SMALL VALUE**, type `x` to delete letters, repeat to keep only quotation marks.
+
+    ![parameters.json empty value](Images/parameters-json-empty.png)
+
+3. Type `i` and enter a small unique value . This will be used for all asset names (cognitive services, storage accounts, web app and service plan, documentDB) so make sure it's unique, only use lower case characters, type between 4 - 8 alpahnumerical characters.
+
+    > **yourunique2135** will likely not work as another one will probably already used this one. I did.
+
+    ![parameters.json empty value](Images/parameters-json-after.png)
+
+4. Type `Esc` to quit insert mode. Type `:wq` to save and quit `vim`.
+
+5. Type this command, and copy your **SubscriptionId**. Select it and type `Ctrl-insert`
+
+    ```powershell
+    ls Azure:
+    ```
+
+    > Under Azure: folder you can browse all asset of your current connected subscription like in a filesystem.
+
+    ![copy SubcriptionId](Images/subscriptionId-list-copy.png)
+
+6. Type these commands to launch the script that will create the assets.
+
+    ```powershell
+    cd .\functions-customer-reviews\Provision\assets\
+    .\Deploy.ps1
+    ```
+
+    >  Use this values for each prompted variables:
+    >
+    > * subscriptionId: Paste your copied **SubscriptionId** value at preceding step. Type `Shift-Insert` 
+    > * resourceGroupName: **customerreview**
+    > * deploymentName: **customerreview**
+
+    ![Deploy all assets](Images/deploy-assets-parameters.png)
+
+7. After a few seconds, Tpe region: **West Europe**
+
+    >  regions available for all assets:  East US, South Central US, North Europe, West Europe, Southeast Asia, West US 2
+
+    ![Deploy all assets](Images/deploy-assets-region.png)
+
+8. Wait a few minutes. Return to Azure portal, click to
+    **Resource groups** > **Overview** > **customerreview** to follow assets provisioning.
+
+    ![asset provisioning in portal](Images/deploy-assets-portal.png)
+
+    At the end, log should look like this one:
+
+    ![Deploy all assets](Images/deploy-assets-log.png)
+
+9. Open a new browser tab. Type this url http://**your_unique_name**site.azurewebsites.net
+
+    > Site can take a few more minutes to be deploy by Kudu from this repo. This [document page](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-complex-application-predictably) explain how to it.
 
 
+![web site deploying ](Images/deploy-assets-websitedeploying.png)
 
-The work of writing and configuring the Azure Function is complete. Now comes the fun part: testing it out.
+_Web site deploying_
+
+> Web site is ready. But still empty and need some images. 
+
+![web site deploying ](Images/deploy-assets-websiteready.png)
+
+The assets are now all deployed and running. Now it's time to add some samples images to the web site.
 
 <a name="Exercise4"></a>
 ## Exercise 4: Add images to CustomerReviews site (Reset datas) ##
 
-Your function is configured to listen for changes to the blob container named "uploaded" that you created in [Exercise 1](#Exercise1). Each time an image appears in the container, the function executes and passes the image to the Computer Vision API for analysis. To test the function, you simply upload images to the container. In this exercise, you will use the Azure Portal to upload images to the "uploaded" container and verify that copies of the images are placed in the "accepted" and "rejected" containers.
+Your Web site is configured to get images from DocumentDB collections that you created in [Exercise 3](#Exercise3). These collections are not set thus the Error on the web site. The`Reset` folder contains scripts to set access to your DocumentDB and storage account. In this exercise, you will set collections, upload images to the DocumentDB, and reset any previous datas.
 
-1. In the Azure Portal, go to the resource group created for your Function App. Then click the storage account that was created for it.
+1. In the Azure Cloud Shell, Type these commands.
 
-    ![Opening the storage account](Images/open-storage-account.png)
+    ```powershell
+    cd C:\Users\ContainerAdministrator\CloudDrive\functions-customer-reviews\Reset
+    .\SetConfigXmlKeys.ps1 -resourceGroup customerreview -uniqueKey your_unique_name
+    vim config.xml
+    ```
 
-    _Opening the storage account_
+    > !Warning! replace **your_unique_name** by the value you use in [Exercise 3](#Exercise3)
+    >
+    > Verify all uppercase values are replaced.
 
-1. Click **Blobs** to view the contents of blob storage.
+    ![Set config.xml parameters](Images/reset-config-set.png)
 
-    ![Opening blob storage](Images/open-blob-storage.png)
+2. Type `!:q` to exit `vim` without saving.
 
-    _Opening blob storage_
+3. Type this command
 
-The presence of seven images in the "accepted" container and one in the "rejected" container is proof that your Azure Function executed each time an image was uploaded to the "uploaded" container. If you would like, return to the BlobImageAnalysis function in the portal and click **Monitor**. You will see a log detailing each time the function executed.
+    > There may be some errors during cleaning as there are no collection in
+    > DocumentDB set yet.
+
+    ![clean up and add images](Images/reset-script-log.png)
+
+4. Open a new browser tab. Type this url http://**your_unique_name**site.azurewebsites.net
+
+    > You may need to force a refresh of the content, type `Ctrl-F5` .  
+
+    ![Web site ready with images](Images/reset-website-ready.png)
 
 
 <a name="Summary"></a>
@@ -185,7 +246,7 @@ The presence of seven images in the "accepted" container and one in the "rejecte
 
 In this hands-on lab you learned how to:
 
-- Create Azure Services with Azure Resource Manager templates
+- Create assets with Azure Resource Manager templates
 - Execute PowerShell and Command srcipts in Azure Cloud Shell
 - Use Azure Web Apps and deployment engine (Kudu) to automate build and deploy of a Web site from a GitHub repo.
 
