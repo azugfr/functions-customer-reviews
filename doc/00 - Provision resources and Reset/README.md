@@ -1,5 +1,5 @@
 <a name="HOLTitle"></a>
-# Provision Customer Reviews assets and Reset datas#
+# Provision Customer Reviews assets and Reset data #
 
 ---
 
@@ -16,7 +16,7 @@ In this lab, you will create the needed assets for to run CustomerReviews web si
 In this hands-on lab, you will learn how to:
 
 - Create Azure Services reuired for [lab 02](../02 - Visual Studio) and [lab 03](../03 - Continuous Delivery)
-   + Storage account, DocumentDb, Cognitives Services,  Application Service, Azure Functions 
+   + Storage account, CosmosDb, Cognitives Services,  Application Service, Azure Functions 
 - Deploy Web site of CutomerReviews
 - Set images data in storage and Document
 
@@ -38,7 +38,7 @@ This hands-on lab includes the following exercises:
 - [Exercise 1: Create an Azure Cloud Shell (PowerShell)](#Exercise1)
 - [Exercise 2: Fork and Clone GitHub repo](#Exercise2)
 - [Exercise 3: Create services with Azure Resource Manager template](#Exercise3)
-- [Exercise 4: Add images to CustomerReviews site (Reset datas)](#Exercise4)
+- [Exercise 4: Add images to CustomerReviews site (Reset data)](#Exercise4)
 
 Estimated time to complete this lab: **30** minutes.
 
@@ -114,7 +114,7 @@ The folders doc and Media contains images and instructions for differents labs a
 The`Provision` folder contains a Azure Resource Manager template file [Provision\assets\template.json](). This file describe all the to be created Azure assets:
 
 * Storage account
-* DocumentDB  
+* CosmosDB is the evolution of DocumentDB. DocumentDB is still the name use in the template for asset name and variables.
 * Cognitives Services Computer Vision (Image analysis)
 * Cognitives Services Content Moderator (Text analysis)
 * Azure Web Site
@@ -143,7 +143,7 @@ In this exercise, you will create these assets.
 
     ![parameters.json empty value](Images/parameters-json-empty.png)
 
-3. Type `i` and enter a small unique value . This will be used for all asset names (cognitive services, storage accounts, web app and service plan, documentDB) so make sure it's unique, only use lower case characters, type between 4 - 8 alpahnumerical characters.
+3. Type `i` and enter a small unique value . This will be used for all asset names (cognitive services, storage accounts, web app and service plan, CosmosDB) so make sure it's unique, only use lower case characters, type between 4 - 8 alpahnumerical characters.
 
     > **yourunique2135** will likely not work as another one will probably already used this one. I did.
 
@@ -164,15 +164,15 @@ In this exercise, you will create these assets.
 6. Type these commands to launch the script that will create the assets.
 
     ```powershell
-    cd .\functions-customer-reviews\Provision\assets\
+    cd C:\users\ContainerAdministrator\CloudDrive\functions-customer-reviews\Provision\assets\
     .\Deploy.ps1
     ```
 
     >  Use this values for each prompted variables:
     >
-    > * subscriptionId: Paste your copied **SubscriptionId** value at preceding step. Type `Shift-Insert` 
-    > * resourceGroupName: **customerreview**
-    > * deploymentName: **customerreview**
+    >  * subscriptionId: Paste your copied **SubscriptionId** value at preceding step. Type `Shift-Insert` 
+    >  * resourceGroupName: **customerreview**
+    >  * deploymentName: **customerreview**
 
     ![Deploy all assets](Images/deploy-assets-parameters.png)
 
@@ -207,21 +207,21 @@ _Web site deploying_
 The assets are now all deployed and running. Now it's time to add some samples images to the web site.
 
 <a name="Exercise4"></a>
-## Exercise 4: Add images to CustomerReviews site (Reset datas) ##
+## Exercise 4: Add images to CustomerReviews site (Reset data) ##
 
-Your Web site is configured to get images from DocumentDB collections that you created in [Exercise 3](#Exercise3). These collections are not set thus the Error on the web site. The`Reset` folder contains scripts to set access to your DocumentDB and storage account. In this exercise, you will set collections, upload images to the DocumentDB, and reset any previous datas.
+Your Web site is configured to get images from CosmosDB collections that you created in [Exercise 3](#Exercise3). These collections are not set thus the Error on the web site. The`Reset` folder contains scripts to set access to your CosmosDB and storage account. In this exercise, you will set collections, upload images to the CosmosDB, and reset any previous data.
 
 1. In the Azure Cloud Shell, Type these commands.
 
     ```powershell
     cd C:\Users\ContainerAdministrator\CloudDrive\functions-customer-reviews\Reset
-    .\SetConfigXmlKeys.ps1 -resourceGroup customerreview -uniqueKey your_unique_name
+    .\SetConfigXmlParameters.ps1 -resourceGroup customerreview -uniqueKey your_unique_name
     vim config.xml
     ```
 
     > !Warning! replace **your_unique_name** by the value you use in [Exercise 3](#Exercise3)
-    >
-    > Verify all uppercase values are replaced.
+    > !Warning!  you might also replace **customerreview** by the resourceGroup name you used
+    > Verify all uppercase values are replaced by values. DocumentDbKey must not be empty. 
 
     ![Set config.xml parameters](Images/reset-config-set.png)
 
@@ -229,8 +229,12 @@ Your Web site is configured to get images from DocumentDB collections that you c
 
 3. Type this command
 
+    ```powershell
+    .\Reset.cmd
+    ```
+
     > There may be some errors during cleaning as there are no collection in
-    > DocumentDB set yet.
+    > CosmosDB set yet.
 
     ![clean up and add images](Images/reset-script-log.png)
 
