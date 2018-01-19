@@ -87,7 +87,7 @@ A JavaScript template has now been created.
 	```
 	cd ReviewTextAndImage
 	npm init
-	tsc -- init
+	tsc --init
 	mv index.js index.ts
 	```
 
