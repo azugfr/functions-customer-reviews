@@ -8,16 +8,14 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="2.1.0-beta4" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DocumentDB" Version="1.1.0-beta4" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="2.1.0-beta4" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />
     <PackageReference Include="Microsoft.ProjectOxford.Vision" Version="1.0.393" />
+    <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
   <ItemGroup>
