@@ -31,7 +31,7 @@ namespace ContentModeratorFunction
 
         public static async Task<(bool, string)> PassesImageModerationAsync(Stream image)
         {
-            var client = new VisionServiceClient(ApiKey);
+            var client = new VisionServiceClient(ApiKey, ApiRoot);
             var result = await client.AnalyzeImageAsync(image, VisualFeatures);
 
             bool containsCat = result.Description.Tags.Take(5).Contains(SearchTag);
@@ -45,7 +45,7 @@ namespace ContentModeratorFunction
                 return true;
             }
 
-            string content = document.ReviewText;                
+            string content = document.ReviewText;
             StringContent stringContent = new StringContent(content);
             httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Environment.GetEnvironmentVariable("ContentModerationApiKey"));
             var response = await httpClient.PostAsync(ApiUri, stringContent);
@@ -61,8 +61,9 @@ namespace ContentModeratorFunction
 
         #region Helpers
 
-        private static string ApiUri = "https://westus.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
+        private static string ApiUri = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
         private static readonly string SearchTag = "cat";
+        private static readonly string ApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/vision/v1.0";
         private static readonly string ApiKey = Environment.GetEnvironmentVariable("MicrosoftVisionApiKey");
         static HttpClient httpClient = new HttpClient();
 

@@ -43,12 +43,12 @@ Follow these instructions to get your Azure subscription set up.
     - Via PowerShell: There is a ``deploy.ps1`` file provided. Run it as Administrator and follow the prompts.
     - If you prefer to do it via the Azure CLI 2.0 these are the commands to run from the ``\Provision\assets`` folder:
 
-| Command | Notes |
-|---------|-------|
-|``az login``|If you're not already logged in. Log in with an account that has owner/administrator permissions to the Azure Subscription.|
-|``az account set --subscription <YOUR SUB ID>``|Set the subscription that you will be deploying to. Substitute ``<YOUR SUB ID>`` with your subscription ID|
-|``az group create --name Reviews --location "West US"`` |Creates a new Resource Group called Reviews in West US. You can change the region but double check it supports all that gets deployed by the ARM template (Computer Vision and Content Moderator Cognitive Services, CosmosDB, Azure Storage (Standard), Application Insights, Azure Web App, Shared Dashboards)| 
-|``az group deployment create --name ReviewsDeploy --resource-group Reviews --template-file template.json --parameters @parameters.json --verbose``|Deploys the ARM template|
+| Command                                  | Notes                                    |
+| ---------------------------------------- | ---------------------------------------- |
+| ``az login``                             | If you're not already logged in. Log in with an account that has owner/administrator permissions to the Azure Subscription. |
+| ``az account set --subscription <YOUR SUB ID>`` | Set the subscription that you will be deploying to. Substitute ``<YOUR SUB ID>`` with your subscription ID |
+| ``az group create --name Reviews --location "West US"`` | Creates a new Resource Group called Reviews in West US. You can change the region but double check it supports all that gets deployed by the ARM template (Computer Vision and Content Moderator Cognitive Services, CosmosDB, Azure Storage (Standard), Application Insights, Azure Web App, Shared Dashboards) |
+| ``az group deployment create --name ReviewsDeploy --resource-group Reviews --template-file template.json --parameters @parameters.json --verbose`` | Deploys the ARM template                 |
 
 You should now have a resource group called Reviews in your Azure subscription with all the assets needed on Azure for the sample. For example, if the unique name chosen was **revnzthi** the following services would show up in the Reviews resource group:
 
@@ -69,7 +69,7 @@ Now that you have created the resource group with all the assets on your Azure s
     - ``documentDbEndpoint`` (Azure Cosmos DB > [uniquename]docdb > Keys > URI)
     - ``documentDbKey`` (Azure Cosmos DB > [uniquename]docdb > Keys > Primary Key)
 
--  Right click on the ``Reset.cmd`` file and select ``Run as Administrator`` and click Yes to confirm. This will:
+- Right click on the ``Reset.cmd`` file and select ``Run as Administrator`` and click Yes to confirm. This will:
     - Add entries to CosmosDB and create a collection in it if it's the first time you run it; don't worry if there is an error saying ``Resource Not Found``, this just means it had to create the CosmosDB collection because it wasn't there yet
     - Add related images to Blob storage that correspond to the CosmosDB entries.
 
@@ -100,13 +100,14 @@ You can also create a VSTS build definition to trigger from a code commit. To ge
     - AzureWebJobsStorage
     - MicrosoftVisionApiKey
     - ContentModerationApiKey
+    - AssetsLocation
     - customerReviewDataDocDB
     - APPINSIGHTS_INSTRUMENTATIONKEY
 - Add the `Replace Tokens` task between the `Build Solution` and `Test Assemblies` tasks. This task will replace the values in `local.settings.json` with the values in the variables. Configure the settings in this task with the following values:
     - sourcePath: ContentModeratorFunction/bin/$(BuildConfiguration)
     - filePattern: local.settings.json
     - tokenRegex: __(\\w+)__
--  Queue a new build run - the build summary should show the two tests passed:
+- Queue a new build run - the build summary should show the two tests passed:
 
 ![](/Media/Setup6.png)
 
