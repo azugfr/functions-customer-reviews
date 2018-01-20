@@ -1,7 +1,19 @@
 param(
-$resourceGroup,
-$uniqueKey
+    [Parameter(Mandatory=$True)]
+    [string]
+    $resourceGroup,
+
+    [Parameter(Mandatory=$True)]
+    [string]
+    $uniqueKey
 )
+
+# sign in
+if ([string]::IsNullOrEmpty($(Get-AzureRmContext).Account))
+{
+    Write-Host "Logging in...";
+    Login-AzureRmAccount;
+}
 
 $storageKey=Get-AzureRmStorageAccountKey -ResourceGroupName $resourceGroup `
                                          -AccountName $uniqueKey'stor' `
