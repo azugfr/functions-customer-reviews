@@ -6,19 +6,19 @@
 <a name="Overview"></a>
 ## Overview ##
 
-Azure Resource Manager helps automate the provisionning of a lot of resources in Azure.
+Azure Resource Manager helps automate the provisioning of plenty of resources in Azure.
 
-In this lab, you will create the needed assets for to run CustomerReviews web site and his automatic moderation with Cognitives Services. You will also add images to populate CustomerReviews site.
+In this lab, you will create the neccessary assets to run the CustomerReviews website and its automatic moderation with Cognitives Services. You will also add images to populate the CustomerReviews website.
 
 <a name="Objectives"></a>
 ### Objectives ###
 
 In this hands-on lab, you will learn how to:
 
-- Create Azure Services reuired for [lab 02](../02 - Visual Studio) and [lab 03](../03 - Continuous Delivery)
+- Create Azure Services required for [lab 02](../02 - Visual Studio) and [lab 03](../03 - Continuous Delivery)
    + Storage account, CosmosDb, Cognitives Services,  Application Service, Azure Functions 
-- Deploy Web site of CutomerReviews
-- Set images data in storage and Document
+- Deploy the CustomerReviews website
+- Create images in a blob storage and documents in Cosmos DB
 
 <a name="Prerequisites"></a>
 ### Prerequisites ###
@@ -26,7 +26,7 @@ In this hands-on lab, you will learn how to:
 The following are required to complete this hands-on lab:
 
 - An active Microsoft Azure subscription. If you don't have one, [sign up for a free trial](http://aka.ms/WATK-FreeTrial).
-- An active GitHub account. If you don't have one, [sign up for free ](https://github.com/join). (optional)
+- An active GitHub account. If you don't have one, [sign up for free](https://github.com/join). (optional)
 
 ---
 
@@ -47,13 +47,13 @@ Estimated time to complete this lab: **30** minutes.
 
 The first step in .... In this exercise, you will create .....
 
-1. Open the [Azure Portal](https://portal.azure.com) in your browser. If asked to log in, do so using your Microsoft account.
+1. Open the [Azure Portal](https://portal.azure.com) in your browser. If you are asked to log in, do so using your Microsoft account.
 
-2. Click **Cloud Shell** button on top of page
+2. Click on the **Cloud Shell** button at the top of the page
 
     ![Open Cloud Shell](Images/open-cloud-shell.png)
 
-    > A banner appear on the back of web page 
+    > The Cloud Shell will appear at the bottom of the page
 
 3. Click **PowerShell (Windows)**
 
@@ -63,18 +63,18 @@ The first step in .... In this exercise, you will create .....
 
     ![Create default storage](Images/create-default-storage.png)
 
-5. Your Azure Cloud Shell be ready in a few minutes . Verify taht you choose Powershell. You can swith between Bash and Powershell in the Dropdown
+5. Your Azure Cloud Shell wil be ready within a few minutes. Make sure you choose Powershell. You can swith between Bash and Powershell in the dropdown list
 
     ![Connecting Cloud Shell](Images/connecting-cloud-powershell.png)
 
-The Azure Cloud Shell is a windows container. A new one will be started with your CloudDrive mapped as a volume. And you will be connected to your Azure current subscription. has been created and you have added three containers to the storage account created for it. The next step is to get code from this repo.
+The Azure Cloud Shell is a window container. A new one will be started with your CloudDrive mapped as a volume. And you will be connected to your current Azure subscription. has been created and you have added three containers to the storage account created for it. The next step is to get code from this repo.
 
 
 
 <a name="Exercise2"></a>
 ## Exercise 2: Fork and Clone GitHub repo ##
 
-Once you have created an Azure Cloud Shell, you can you can use Powershell, commands, and some other SDK or application installed on it. In this exercise, you will clone the git repo into a persistent volume _CloudDrive_ . This will allow you to get all the scripts necessary to create the assets. 
+Once you have created an Azure Cloud Shell, you can use Powershell, commands, and some other SDK or application installed on it. In this exercise, you will clone the git repo into a persistent volume _CloudDrive_. This will allow you to get all the scripts necessary to create the assets. 
 
 1. Type these commands to navigate to your CloudDrive and clone this git repository.
 
@@ -106,12 +106,16 @@ Once you have created an Azure Cloud Shell, you can you can use Powershell, comm
 
 
 
-The folders doc and Media contains images and instructions for differents labs and demo. Source contains source code of the sample. Provision folder contains the scripts to create assets required for [lab 02](../02 - Visual Studio) and [lab 03](../03 - Continuous Delivery). Reset folder contains the scripts to clean up and pre filled images . The next step is to create the assets that the Customer Reviews solution relies on.
+The folders doc and Media contain images and instructions for differents labs and demo. 
+The Source folder contains source code of the sample. The Provision folder contains the scripts to create assets required for [lab 02](../02 - Visual Studio) and [lab 03](../03 - Continuous Delivery). 
+The Reset folder contains the scripts to clean up and pre filled images. 
+
+The next step is to create the assets that the Customer Reviews solution relies on.
 
 <a name="Exercise3"></a>
 ## Exercise 3: Create assets with Azure Resource Manager template ##
 
-The`Provision` folder contains a Azure Resource Manager template file [Provision\assets\template.json](). This file describe all the to be created Azure assets:
+The `Provision` folder contains an Azure Resource Manager template file [Provision\assets\template.json](). This file describe all the to be created Azure assets:
 
 * Storage account
 * CosmosDB is the evolution of DocumentDB. DocumentDB is still the name use in the template for asset name and variables.
@@ -145,7 +149,7 @@ In this exercise, you will create these assets.
 
 3. Type `i` and enter a small unique value . This will be used for all asset names (cognitive services, storage accounts, web app and service plan, CosmosDB) so make sure it's unique, only use lower case characters, type between 4 - 8 alpahnumerical characters.
 
-    > **yourunique2135** will likely not work as another one will probably already used this one. I did.
+    > **yourunique2135** will likely not work as another one will probably have been taken by another user. I did.
 
     ![parameters.json empty value](Images/parameters-json-after.png)
 
@@ -157,7 +161,7 @@ In this exercise, you will create these assets.
     ls Azure:
     ```
 
-    > Under Azure: folder you can browse all asset of your current connected subscription like in a filesystem.
+    > Under Azure: folder you can browse all assets of your current connected subscription like in a filesystem.
 
     ![copy SubcriptionId](Images/subscriptionId-list-copy.png)
 
@@ -170,13 +174,13 @@ In this exercise, you will create these assets.
 
     >  Use this values for each prompted variables:
     >
-    >  * subscriptionId: Paste your copied **SubscriptionId** value at preceding step. Type `Shift-Insert` 
+    >  * subscriptionId: Paste your copied **SubscriptionId** value from the previous step. Type `Shift-Insert` 
     >  * resourceGroupName: **customerreview**
     >  * deploymentName: **customerreview**
 
     ![Deploy all assets](Images/deploy-assets-parameters.png)
 
-7. After a few seconds, Tpe region: **West Europe**
+7. After a few seconds, type region: **West Europe**
 
     >  regions available for all assets:  East US, South Central US, North Europe, West Europe, Southeast Asia, West US 2
 
@@ -187,13 +191,13 @@ In this exercise, you will create these assets.
 
     ![asset provisioning in portal](Images/deploy-assets-portal.png)
 
-    At the end, log should look like this one:
+    At the end, the log should look like this one:
 
     ![Deploy all assets](Images/deploy-assets-log.png)
 
 9. Open a new browser tab. Type this url http://**your_unique_name**site.azurewebsites.net
 
-    > Site can take a few more minutes to be deploy by Kudu from this repo. This [document page](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-complex-application-predictably) explain how to it.
+    > Site can take a few more minutes to be deployed by Kudu from this repo. This [document page](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-complex-application-predictably) explains how to do it.
 
 
 ![web site deploying ](Images/deploy-assets-websitedeploying.png)
@@ -209,7 +213,7 @@ The assets are now all deployed and running. Now it's time to add some samples i
 <a name="Exercise4"></a>
 ## Exercise 4: Add images to CustomerReviews site (Reset data) ##
 
-Your Web site is configured to get images from CosmosDB collections that you created in [Exercise 3](#Exercise3). These collections are not set thus the Error on the web site. The`Reset` folder contains scripts to set access to your CosmosDB and storage account. In this exercise, you will set collections, upload images to the CosmosDB, and reset any previous data.
+Your website is configured to get images from CosmosDB collections that you created in [Exercise 3](#Exercise3). These collections are not set, thus the Error on the web site. The `Reset` folder contains the scripts to set access to your CosmosDB and storage account. In this exercise, you will set collections, upload images to the CosmosDB, and reset any previous data.
 
 1. In the Azure Cloud Shell, Type these commands.
 
@@ -219,9 +223,9 @@ Your Web site is configured to get images from CosmosDB collections that you cre
     vim config.xml
     ```
 
-    > !Warning! replace **your_unique_name** by the value you use in [Exercise 3](#Exercise3)
+    > !Warning! replace **your_unique_name** by the value you used in [Exercise 3](#Exercise3)
     > !Warning!  you might also replace **customerreview** by the resourceGroup name you used
-    > Verify all uppercase values are replaced by values. DocumentDbKey must not be empty. 
+    > Make sure all uppercase values are replaced by values. DocumentDbKey must not be empty. 
 
     ![Set config.xml parameters](Images/reset-config-set.png)
 
