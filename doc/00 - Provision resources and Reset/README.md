@@ -122,8 +122,8 @@ The `Provision` folder contains an Azure Resource Manager template file [Provisi
 * Cognitives Services Computer Vision (Image analysis)
 * Cognitives Services Content Moderator (Text analysis)
 * Azure Web Site
-* Application Insights
-* Azure Functions 
+* Application Insights and a specific dashboard "Reviews Insights"
+* Azure Function App
 
 In this exercise, you will create these assets.
 
