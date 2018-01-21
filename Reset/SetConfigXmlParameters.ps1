@@ -27,7 +27,7 @@ $docdbKey=Invoke-AzureRmResourceAction -Action listKeys `
 			  -Force `
           | Select-Object -first 1
 
-(Get-Content .\config.xml) -replace "YOURSTORAGECONNECTIONSTRING",$storageConnection `
+(Get-Content $PSScriptRoot\config.xml) -replace "YOURSTORAGECONNECTIONSTRING",$storageConnection `
                            -replace "YOURCOSMOSDBENDPOINT",$docdbUri `
                            -replace "YOURCOSMOSDBKEY",$docdbKey.primaryMasterKey `
-| Set-Content .\config.xml
+| Set-Content $PSScriptRoot\config.xml

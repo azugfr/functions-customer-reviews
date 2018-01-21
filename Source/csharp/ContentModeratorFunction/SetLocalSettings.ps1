@@ -38,10 +38,10 @@ $location=Get-AzureRmCognitiveServicesAccount `
 
 $appInsights=Get-AzureRmApplicationInsights -ResourceGroupName $resourceGroup
 
-(Get-Content .\local.settings.json) -replace "__AzureWebJobsStorage__",$storageConnection `
+(Get-Content $PSScriptRoot\local.settings.json) -replace "__AzureWebJobsStorage__",$storageConnection `
                                     -replace "__MicrosoftVisionApiKey__",$computerVisionKey `
 									-replace "__ContentModerationApiKey__",$contentModeratorKey `
                                     -replace "__AssetsLocation__",$location `
                                     -replace "__customerReviewDataDocDB__","AccountEndpoint=$docdbUri;AccountKey=$($docdbKey.primaryMasterKey);" `
                                     -replace "__APPINSIGHTS_INSTRUMENTATIONKEY__",$appInsights.InstrumentationKey `
-| Set-Content .\local.settings.json
+| Set-Content $PSScriptRoot\local.settings.json
