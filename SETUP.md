@@ -13,8 +13,8 @@ Install the following on your machine:
     - ASP.NET and Web development
     - Azure development
     - .NET Core cross-platform development
-- [Latest Azure Functions tools for Visual Studio 2017](https://marketplace.visualstudio.com/vsgallery/e3705d94-7cc3-4b79-ba7b-f43f30774d28). When you first use this it will also install the Azure Functions CLI tools. 
-- [Microsoft .NET Framework 4.6.2 Developer Pack](http://getdotnet.azurewebsites.net/target-dotnet-platforms.html)
+- [Latest Azure Functions tools for Visual Studio 2017](https://marketplace.visualstudio.com/items?itemName=VisualStudioWebandAzureTools.AzureFunctionsandWebJobsTools). When you first use this it will also install the Azure Functions CLI tools. 
+- [Microsoft .NET Framework 4.6.2 Developer Pack](https://www.microsoft.com/net/download/visual-studio-sdks)
 - [Azure PowerShell](https://azure.microsoft.com/en-us/downloads/) or the [Azure CLI 2.0](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (for the ARM template deployment)
 - [Git tools for Windows](https://git-scm.com/download/win)
 - Optional: [Continuous Delivery Tools for Visual Studio](https://marketplace.visualstudio.com/items?itemName=VSIDEDevOpsMSFT.ContinuousDeliveryToolsforVisualStudio) 
