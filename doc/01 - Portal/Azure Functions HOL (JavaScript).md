@@ -257,6 +257,8 @@ Once you have created an Azure Function App, you can add Azure Functions to it. 
 	npm install azure-storage
 	```
 
+(If the npm install is not working, update the version of NPM to 8.5.0 in the Application Settings)
+
 An Azure Function written in JavaScript has been created and configured and the packages that the function relies upon have been installed. The next step is to add an application setting that the Azure Function relies on.
 
 <a name="Exercise3"></a>
