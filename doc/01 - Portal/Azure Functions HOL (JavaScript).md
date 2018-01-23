@@ -141,7 +141,7 @@ Once you have created an Azure Function App, you can add Azure Functions to it. 
 
 	function getAnalysisOptions(image, subscriptionKey) {
 	    return  {
-	        uri: "https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze?visualFeatures=Adult",
+	        uri: "https://westeurope.api.cognitive.microsoft.com/vision/v1.0/analyze?visualFeatures=Adult",
 	        method: 'POST',
 	        body: image,
 	        headers: {
