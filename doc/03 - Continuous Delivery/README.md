@@ -1,5 +1,5 @@
 <a name="HOLTitle"></a>
-# Provision Customer Reviews Services and Reset datas 
+# Create a continuous delivery pipeline  
 
 ---
 
@@ -39,24 +39,47 @@ This hands-on lab includes the following exercises:
 - [Exercise 3: Create a pipeline to Continuous Delivery of an Azure Function](#Exercise3)
 - [Exercise 4: Create custom query and use dashboard of Application Insights](#Exercise4)
 
-Estimated time to complete this lab: **30** minutes.
+Estimated time to complete this lab: **60** minutes.
 
 <a name="Exercise1"></a>
 ## Exercise 1: Create an VSTS account and Project ##
 
 The first step in creting a continuous pipeline is to create an VSTS account and a Team Project. In this exercise, you will create the a new account and through Azure Portal.
 
-1. Use an existing VSTS account or [create a new one](https://www.visualstudio.com/en-us/docs/setup-admin/team-services/sign-up-for-visual-studio-team-services)
+1. Open the [Azure Portal](http://portal.azure.com) in your browser. If you are asked to log in, do so using your Microsoft account.
 
-2. Open this link to create a VSTS account : https://go.microsoft.com/fwlink/?LinkId=307137 , and login with the sam Microsoft account than in Azure portal.
+2. Click **New** , enter **Team**, and click **Team project**
 
-    ![Login VSTS](Images/vsts-account-login.png)
+    ![create Team Project](Images/vsts-account-new.png)
 
-3. Enter a name for your account, and then click on **Continue**
+3. Click on **Create** 
 
-    > if you want to change the de deployment region or the name of team project created, click on **Change details** .
+    ![create team project](Images/vsts-account-create.png)
 
-    ![create account and team project](Images/vsts-account-create.png)
+4. Enter `MyFirstProject` in **Name**, click **Account**, click **Create a new account**, enter a new name in  **URL**, click **OK**, and click **Create**
+
+    > If  you want to change the de deployment region or the name of team project created, click on **Location** .
+
+
+![create team project](Images/vsts-account-project-create.png)
+
+1. Click on **go to resource groupe**
+
+    ![go to resource group](Images/vsts-account-go-to-resourcegroup.png)
+
+2. Click on your VSTS account
+
+    ![click VSTS account](Images/vsts-account-team-open.png)
+
+3. Click on **Url**
+
+    ![build and deployment](Images/vsts-account-build-deployment.png)
+
+4. Click on  **MyFirstProject**
+
+    ![open projects](Images/vsts-account-project-open.png)
+
+
 
 4. Check you project MyFirstProject is created. 
 
@@ -101,6 +124,8 @@ The VSTS team project you created in [Exercise 1](#Exercise1) and the GitHub rep
 
 2. Click **+New** button 
 
+   ![create new build](Images/vsts-build-new.png)
+
 3. Select **ASP.NET**, click on **Apply**
 
    ![select ASP.NET](Images/vsts-build-select-aspnet.png)
@@ -135,7 +160,7 @@ The VSTS team project you created in [Exercise 1](#Exercise1) and the GitHub rep
 
 10. Select **Azure App Service Deployment**, and click **Apply**
 
-    ![select app service deployment](Images/vsts-release-select-app-service-deployment.png) 
+   ![select app service deployment](Images/vsts-release-select-app-service-deployment.png) 
 
 11. Enter `Dev` in **Environment**
 
@@ -153,7 +178,7 @@ The VSTS team project you created in [Exercise 1](#Exercise1) and the GitHub rep
 
     ![New Azure subscription](Images/vsts-release-new-azure-subscription.png)
 
-15. Click
+15. Click on **use the automated version of the endpoint dialog**
 
     ![use automated view](Images/vsts-release-subscription-use-automated.png)
 
@@ -164,11 +189,11 @@ The VSTS team project you created in [Exercise 1](#Exercise1) and the GitHub rep
 
     ![create Azure end point](Images/vsts-release-subscription-create-endpoint.png)
 
-17.  Click **Authorize** 
+17.  Click **Authorize**
 
-    ![authorize subscription](Images/vsts-release-subscription-authorize.png)
+    > A popup may appear. Login to proceed.
 
-    > A login popup may appear. login to proceed
+![authorize subscription](Images/vsts-release-subscription-authorize.png)
 
 18. Select **Function App** in **App type** dropdown, select your `<unique_name>function` in **App service name** dropdown
 
@@ -205,7 +230,7 @@ The VSTS team project you created in [Exercise 1](#Exercise1) and the GitHub rep
     You have now a minimal pipeline to update your Azure Function. You can test your function work by adding some image to CustomerReviews site.
 
 
-### (Optional) Expand build to run tests 
+### Expand build to run tests 
 
 You can expand the build to also run tests
 
@@ -215,7 +240,7 @@ You can expand the build to also run tests
 
 3. Create the following variables for your new build definitions:
 
-   - AzureWebJobsStorage
+   - AzureWebJobsStorage  from your resource group > <unique_name>
    - MicrosoftVisionApiKey
    - ContentModerationApiKey
    - customerReviewDataDocDB
