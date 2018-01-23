@@ -146,7 +146,7 @@ public async static Task Run(Stream myBlob, Stream acceptedBlob, Stream rejected
     var key =Environment.GetEnvironmentVariable("SubscriptionKey").ToString();
     var searchCatTag = "cat";
 
-    var vsClient = new VisionServiceClient(key);
+    var vsClient = new VisionServiceClient(key, "https://westeurope.api.cognitive.microsoft.com/vision/v1.0");
     var result = await vsClient.AnalyzeImageAsync(myBlob, VisualFeatures);
     myBlob.Position = 0;
     bool containsCat = result.Description.Tags.Contains(searchCatTag);
