@@ -54,15 +54,19 @@ The first step in writing an Azure Function is to create an Azure Function App. 
 
   ![](Images/new-function-app.png)
 
-    _Creating an Azure Function App_
+  _Creating an Azure Function App_
 
 3. Enter an app name that is unique within Azure. Under **Resource Group**, select **Create new** and enter "FunctionsLabResourceGroup" (without quotation marks) as the resource-group name to create a resource group for the Function App. Choose the **Location** nearest you, and accept the default values for all other parameters. Then click **Create** to create a new Function App.
 
   > The app name becomes part of a DNS name and therefore must be unique within Azure. Make sure a green check mark appears to the name indicating it is unique. You probably **won't** be able to use "functionslab" as the app name.
 
-    ![Creating a Function App](Images/function-app-name.png)
+   
 
-    _Creating a Function App_
+  ![Creating a Function App](Images/function-app-name.png)
+
+    
+
+  _Creating a Function App_
 
 4. Click **Resource groups** in the ribbon on the left side of the portal, and then click the resource group created for the Function App.
 
