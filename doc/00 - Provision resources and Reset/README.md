@@ -220,18 +220,26 @@ Your website is configured to get images from CosmosDB collections that you crea
     ```powershell
     cd C:\Users\ContainerAdministrator\CloudDrive\functions-customer-reviews\Reset
     .\SetConfigXmlParameters.ps1 -resourceGroup customerreview -uniqueKey your_unique_name
+    ```
+
+    > !Warning! replace **your_unique_name** by the value you used in [Exercise 3](#Exercise3)<br>
+    > !Warning!  you might also replace **customerreview** by the resourceGroup name you used
+
+2. Type this command.
+   
+    ```powershell
     vim config.xml
     ```
 
-    > !Warning! replace **your_unique_name** by the value you used in [Exercise 3](#Exercise3)
-    > !Warning!  you might also replace **customerreview** by the resourceGroup name you used
     > Make sure all uppercase values are replaced by values. DocumentDbKey must not be empty. 
+    > If it's stay empty, you might have started `SetConfigParameters.ps1` when pasting the command. It's common. You can reset `config.xml` file by typing:<br>
+    > `git checkout .\config.xml`  
 
     ![Set config.xml parameters](Images/reset-config-set.png)
 
-2. Type `!:q` to exit `vim` without saving.
+3. Type `!:q` to exit `vim` without saving.Type `!:q` to exit `vim` without saving.
 
-3. Type this command
+4. Type this command
 
     ```powershell
     .\Reset.cmd
@@ -242,7 +250,7 @@ Your website is configured to get images from CosmosDB collections that you crea
 
     ![clean up and add images](Images/reset-script-log.png)
 
-4. Open a new browser tab. Type this url http://**your_unique_name**site.azurewebsites.net
+5. Open a new browser tab. Type this url http://**your_unique_name**site.azurewebsites.net
 
     > You may need to force a refresh of the content, type `Ctrl-F5` .  
 
