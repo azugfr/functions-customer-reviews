@@ -36,7 +36,7 @@ The following are required to complete this hands-on lab:
 This hands-on lab includes the following exercises:
 
 - [Exercise 1: Create an Azure Cloud Shell (PowerShell)](#Exercise1)
-- [Exercise 2: Fork and Clone GitHub repo](#Exercise2)
+- [Exercise 2: Clone GitHub repository](#Exercise2)
 - [Exercise 3: Create services with Azure Resource Manager template](#Exercise3)
 - [Exercise 4: Add images to CustomerReviews site (Reset data)](#Exercise4)
 
@@ -72,7 +72,7 @@ The Azure Cloud Shell is a window container. A new one will be started with your
 
 
 <a name="Exercise2"></a>
-## Exercise 2: Fork and Clone GitHub repo ##
+## Exercise 2: Clone GitHub repository ##
 
 Once you have created an Azure Cloud Shell, you can use Powershell, commands, and some other SDK or application installed on it. In this exercise, you will clone the git repo into a persistent volume _CloudDrive_. This will allow you to get all the scripts necessary to create the assets. 
 
@@ -147,7 +147,7 @@ In this exercise, you will create these assets.
 
     ![parameters.json empty value](Images/parameters-json-empty.png)
 
-3. Type `i` and enter a small unique value . This will be used for all asset names (cognitive services, storage accounts, web app and service plan, CosmosDB) so make sure it's unique, only use lower case characters, type between 4 - 8 alpahnumerical characters.
+3. Type `i` and enter a small unique value . This will be used for all asset names (cognitive services, storage accounts, web app and service plan, CosmosDB) so **make sure it's unique, only use lower case characters, type between 4 - 12 alphamerical characters**.
 
     > **yourunique2135** will likely not work as another one will probably have been taken by another user. I did.
 
