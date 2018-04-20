@@ -309,15 +309,15 @@ Your function is configured to listen for changes to the blob container named "u
 
     _Opening the "accepted" container_
 
-8. Verify that the "accepted" container holds seven images. **These are the images that were classified as cats by the Computer Vision API**.
+8. Verify that the "accepted" container holds two images. **These are the images that were classified as cats by the Computer Vision API**.
 
   > It may take a minute or more for all of the images to appear in the container. If necessary, click **Refresh** every few seconds until you see all seven images.
 
-    ![Images in the "accepted" container](Images/accepted-images.png)
+  ![Images in the "accepted" container](Images/accepted-images.png)
 
-    _Images in the "accepted" container_
+  _Images in the "accepted" container_
 
-9. Close the blade for the "accepted" container and open the blade for the "rejected" container. Verify that the "rejected" container holds one image. **This image was classified as cats by the Computer Vision API**.
+9. Close the blade for the "accepted" container and open the blade for the "rejected" container. Verify that the "rejected" container holds few images. **These images were not classified as cats by the Computer Vision API**.
 
     ![Images in the "rejected" container](Images/rejected-images.png)
 
