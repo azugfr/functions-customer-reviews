@@ -367,7 +367,7 @@ Your function is configured to listen for changes to the blob container named "u
 
 1. Close the blade for the "accepted" container and open the blade for the "rejected" container. Verify that the "rejected" container holds one image. **This image was classified as adult or racy (or both) by the Computer Vision API**.
 
-    ![Images in the "rejected" container](Images/rejected-images.png)
+    ![Images in the "rejected" container](Images/js-rejected-images.png)
 
     _Images in the "rejected" container_
 
