@@ -52,7 +52,7 @@ In this exercise, you will write C# code that uses the [Computer Vision API](htt
 ![New Azure Function project](../../../Media/new_azure_function_project.png)
 
 2. On the template dialog, configure your function as followed:
-- Keep **Azure Functions v1 (.NET Framework)** in the dropdown list
+- Select **Azure Functions v2 (.NET Standard)** in the dropdown list
 - Select **Queue Trigger**
 - Set the **Storage Account** to the one you have created at the beginning of this hands-on-lab
 - Set the **Path** to **review-queue**
@@ -68,9 +68,10 @@ This generates a new project which contains the following files:
 
 4. The **FunctionName** attribute on the method sets the name of the function. Change it to **ReviewImageAndText**.
 
-5. Install the NuGet package **Microsoft.Azure.WebJobs.Extensions.DocumentDB**
+5. Install the NuGet packages **Microsoft.Azure.WebJobs.Extensions.Storage** and **Microsoft.Azure.WebJobs.Extensions.CosmosDB**
 	```
-	PM> Install-Package Microsoft.Azure.WebJobs.Extensions.DocumentDB
+	PM> Install-Package Microsoft.Azure.WebJobs.Extensions.Storage
+	PM> Install-Package Microsoft.Azure.WebJobs.Extensions.CosmosDB
 	```
 
 6. Let's define the **trigger** and the **bindings** of the function. Change the content of the .cs file:
@@ -102,7 +103,7 @@ This generates a new project which contains the following files:
 			public static async Task Run(
 				[QueueTrigger("review-queue")] ReviewRequestItem queueInput,
 				[Blob("input-images/{BlobName}", FileAccess.Read)] Stream image,
-				[DocumentDB("customerReviewData", "reviews", Id = "{DocumentId}", PartitionKey = "Reviews", ConnectionStringSetting = "customerReviewDataDocDB")] dynamic inputDocument)
+				[CosmosDB("customerReviewData", "reviews", Id = "{DocumentId}", PartitionKey = "Reviews", ConnectionStringSetting = "customerReviewDataDocDB")] dynamic inputDocument)
 			{
 
 			}
@@ -152,13 +153,16 @@ As you can see, the function has a queue trigger, a Blob storage input and a Cos
 	bool passesText = await PassesTextModeratorAsync(inputDocument);
 	```
 	
-9. Text has been reviewed. Time to analyze the image now. First add the NuGet package **Microsoft.ProjectOxford.Vision** and then add the following method to your code editor:
+9. Text has been reviewed. Time to analyze the image now. First add the NuGet package **Microsoft.Azure.CognitiveServices.Vision.ComputerVision** and then add the following method to your code editor:
 
 	```cs
 	public static async Task<(bool, string)> PassesImageModerationAsync(Stream image)
 	{
-		var client = new VisionServiceClient(Environment.GetEnvironmentVariable("MicrosoftVisionApiKey"), ComputerVisionApiRoot);
-		var result = await client.AnalyzeImageAsync(image, new[] { VisualFeature.Description });
+        var client = new ComputerVisionClient(
+            new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("MicrosoftVisionApiKey")),
+            new DelegatingHandler[] { });
+
+        var result = await client.AnalyzeImageInStreamAsync(image, new[] { VisualFeatureTypes.Description });
 
 		bool containsCat = result.Description.Tags.Take(5).Contains(SearchTag);
 		string message = result.Description?.Captions.FirstOrDefault()?.Text;
