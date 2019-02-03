@@ -68,7 +68,7 @@ In this exercise, you will create an Azure Function App using Azure Functions CL
 	func init
 	```
 
-**host.json** and **appsettings.json** will be created.	
+Choose **2. node** as worker runtime. **host.json** and **local.settings.json** will be created.	
 	
 2. Let's create a simple queue triggered function:
 
@@ -76,7 +76,7 @@ In this exercise, you will create an Azure Function App using Azure Functions CL
 	func new
 	```
 
-Select **JavaScript** as language, **QueueTrigger** as template and enter the name **ReviewTextAndImage** for the function name.
+Choose **10. Azure Queue Storage trigger** as template and enter the name **ReviewTextAndImage** for the function name.
 
 ![Creating a function from Powershell](../../../Media/create_function_from_ps.png)
 
@@ -162,24 +162,24 @@ Open function.json and replace the JSON shown in the code editor with the follow
           "connection": "AzureWebJobsStorage"
         },
         {
-          "type": "documentDB",
+          "type": "cosmosDB",
           "name": "inputDocumentIn",
           "direction": "in",
           "databaseName": "customerReviewData",
           "collectionName": "reviews",
           "id": "{DocumentId}",
           "partitionKey": "Reviews",
-          "connection": "customerReviewDataDocDB"
+          "connectionStringSetting": "customerReviewDataDocDB"
         },
         {
-          "type": "documentDB",
+          "type": "cosmosDB",
           "name": "inputDocumentOut",
           "direction": "out",
           "databaseName": "customerReviewData",
           "collectionName": "reviews",
           "createIfNotExists": false,
           "partitionKey": "Reviews",
-          "connection": "customerReviewDataDocDB"
+          "connectionStringSetting": "customerReviewDataDocDB"
         }
       ]
     }
@@ -292,7 +292,6 @@ You can also execute a task from VS Code to build the function. Press F1 in VS C
 ![Deploy to Function App](../../../Media/deploy_azure_functions.png)	
 
 Choose a folder on your local system, then choose an Azure subscription and select a function app (or create a new one).
-Select **JavaScript** as the project language and **~1** as the project runtime.
 
 3. Add the following settings in the Application Settings of your function app:
 
