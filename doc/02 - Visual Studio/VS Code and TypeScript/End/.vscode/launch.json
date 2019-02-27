@@ -2,12 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach to JavaScript Functions",
+      "name": "Attach to Node Functions",
       "type": "node",
       "request": "attach",
-      "port": 5858,
-      "protocol": "inspector",
-      "preLaunchTask": "launchFunctionApp"
+      "port": 9229,
+      "preLaunchTask": "func: host start"
     }
   ]
 }

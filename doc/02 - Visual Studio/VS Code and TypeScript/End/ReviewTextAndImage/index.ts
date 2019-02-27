@@ -1,9 +1,10 @@
-import axios from 'axios';
+import { AzureFunction, Context } from "@azure/functions"
+import axios from 'axios'
 
 const CONTENT_MODERATOR_API_URL: string = "https://westeurope.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
 const COMPUTER_VISION_API_URL: string = "https://westeurope.api.cognitive.microsoft.com/vision/v1.0/analyze?visualFeatures=Description,Tags&language=en";
 
-export async function run(context: any, queueInput: any, image: any, inputDocumentIn: any) {
+const queueTrigger: AzureFunction = async function (context: Context, myQueueItem: string, image: any, inputDocumentIn: any): Promise<void> {
     let passesText = await passesTextModeratorAsync(inputDocumentIn);
 
     context.bindings.inputDocumentOut = inputDocumentIn;
@@ -62,3 +63,5 @@ interface Tag {
     confidence: number,
     name: string
 }
+
+export default queueTrigger;

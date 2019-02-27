@@ -17,24 +17,25 @@
       "connection": "AzureWebJobsStorage"
     },
     {
-      "type": "documentDB",
+      "type": "cosmosDB",
       "name": "inputDocumentIn",
       "direction": "in",
       "databaseName": "customerReviewData",
       "collectionName": "reviews",
       "id": "{DocumentId}",
       "partitionKey": "Reviews",
-      "connection": "customerReviewDataDocDB"
+      "connectionStringSetting": "customerReviewDataDocDB"
     },
     {
-      "type": "documentDB",
+      "type": "cosmosDB",
       "name": "inputDocumentOut",
       "direction": "out",
       "databaseName": "customerReviewData",
       "collectionName": "reviews",
       "createIfNotExists": false,
       "partitionKey": "Reviews",
-      "connection": "customerReviewDataDocDB"
+      "connectionStringSetting": "customerReviewDataDocDB"
     }
-  ]
+  ],
+  "scriptFile": "../dist/ReviewTextAndImage/index.js"
 }

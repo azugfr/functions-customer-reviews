@@ -1,12 +1,7 @@
-﻿{
+{
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "__AzureWebJobsStorage__",
-    "MicrosoftVisionApiKey": "__MicrosoftVisionApiKey__",
-    "ContentModerationApiKey": "__ContentModerationApiKey__",
-    "customerReviewDataDocDB": "__customerReviewDataDocDB__",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "__APPINSIGHTS_INSTRUMENTATIONKEY__",
-    "queue-name": "review-queue"
-  },
-  "ConnectionStrings": {}
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "{AzureWebJobsStorage}"
+  }
 }
