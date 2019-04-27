@@ -85,7 +85,7 @@ Once you have created an Azure Cloud Shell, you can use Powershell, commands, an
     > - Mac OS: `Cmd-c` to copy and `Cmd-v` to paste. Right-click dropdown can also enable copy/paste.
 
     ```powershell
-    cd C:\users\ContainerAdministrator\CloudDrive
+    cd 
     git clone --depth 1 --single-branch https://github.com/azugfr/functions-customer-reviews.git
     ```
 
@@ -168,7 +168,7 @@ In this exercise, you will create these assets.
 6. Type these commands to launch the script that will create the assets.
 
     ```powershell
-    cd C:\users\ContainerAdministrator\CloudDrive\functions-customer-reviews\Provision\assets\
+    cd .\Provision\assets\
     .\Deploy.ps1
     ```
 
@@ -218,7 +218,7 @@ Your website is configured to get images from CosmosDB collections that you crea
 1. In the Azure Cloud Shell, Type these commands.
 
     ```powershell
-    cd C:\Users\ContainerAdministrator\CloudDrive\functions-customer-reviews\Reset
+    cd ../Reset/
     .\SetConfigXmlParameters.ps1 -resourceGroup customerreview -uniqueKey your_unique_name
     ```
 
