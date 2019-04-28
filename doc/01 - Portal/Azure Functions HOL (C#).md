@@ -74,27 +74,35 @@ The first step in writing an Azure Function is to create an Azure Function App. 
 
     _Opening the resource group_
 
+
+
 5. Periodically click the **Refresh** button at the top of the blade until "Deploying" changes to "Succeeded," indicating that the Function App has been deployed. Then click the storage account that was created for the Function App.
 
     ![Opening the storage account](Images/open-storage-account-after-deployment.png)
 
     _Opening the storage account_
 
-6. Click **Blobs** to view the contents of blob storage.
+6. Click on **Function Name**, and then in the Platform features in the right pane. Then clik on **Function app settings**, select **-1** 
+
+    ![Chaning Function app setting](Images/change-appsettings.PNG)
+
+    _Chaning Function app setting_
+
+7. Click **Blobs** to view the contents of blob storage.
 
     ![Opening blob storage](Images/open-blob-storage.png)
 
     _Opening blob storage_
 
-7. Click **+ Container**. Type "uploaded" into the **Name** box and set **Access type** to **Private**. Then click the **OK** button to create a new container.
+8. Click **+ Container**. Type "uploaded" into the **Name** box and set **Access type** to **Private**. Then click the **OK** button to create a new container.
 
     ![Adding a container](Images/add-container.png)
 
     _Adding a container_
 
-8. Repeat Step 7 to add containers named "accepted" and "rejected" to blob storage.
+9. Repeat Step 7 to add containers named "accepted" and "rejected" to blob storage.
 
-9. Confirm that all three containers were added to blob storage.
+10. Confirm that all three containers were added to blob storage.
 
     ![The new containers](Images/new-containers.png)
 
@@ -186,7 +194,8 @@ public async static Task Run(Stream myBlob, Stream acceptedBlob, Stream rejected
   {
       "frameworks": {
           "net46": {
-              "dependencies": {					"Microsoft.ProjectOxford.Vision": "1.0.393",
+              "dependencies": {					
+                  "Microsoft.ProjectOxford.Vision": "1.0.393",
                   "WindowsAzure.Storage": "7.2.0"
               }
           }
@@ -212,41 +221,41 @@ An Azure Function written in C# has been created, complete with a JSON project f
 
 The Azure Function you created in [Exercise 2](#Exercise2) loads a subscription key for the Microsoft Cognitive Services Computer Vision API from application settings. This key is required in order for your code to call the Computer Vision API, and is transmitted in an HTTP header in each call. In this exercise, you will subscribe to the Computer Vision API, and then add an access key for the subscription to application settings.
 
-1. In the Azure Portal, click **+ New**, followed by **AI + Cognitive Services** and **Computer Vision API**.
+1. In the Azure Portal, click **+ New**, followed by **AI + Machine Learning** and **Computer Vision**.
 
-    ![Creating a new Computer Vision API subscription](Images/new-vision-api.png)
+    ![Creating a new Computer Vision subscription](Images/new-vision-api.png)
 
-    _Creating a new Computer Vision API subscription_
+    _Creating a new Computer Vision subscription_
 
 2. Enter "VisionAPI" into the **Name** box and select **F0** as the **Pricing tier**. Under **Resource Group**, select **Use existing** and select the "FunctionsLabResourceGroup" that you created for the Function App in Exercise 1. Check the **I confirm** box, and then click **Create**.
 
-    ![Subcribing to the Computer Vision API](Images/create-vision-api.png)
+    ![Subcribing to the Computer Vision](Images/create-vision-api.png)
 
-    _Subcribing to the Computer Vision API_
+    _Subcribing to the Computer Vision_
 
 3. Return to the blade for the "FunctionsLabResourceGroup" resource group and click the Computer Vision API subscription that you just created.
 
-    ![Opening the Computer Vision API subscription](Images/open-vision-api.png)
+    ![Opening the Computer Vision subscription](Images/open-vision-api.png)
 
-    _Opening the Computer Vision API subscription_
+    _Opening the Computer Vision subscription_
 
-4. Click **Overview** in left pane. Click **Show access keys**.
+4. Click **Overview** in left pane. Click **Show access keys**. 
 
     ![Viewing the access keys](Images/show-access-keys.png)
 
     _Viewing the access keys_
 
-5. Click the **Copy** button to the right of **KEY 1** to copy the access key to the clipboard.
+5. Click the **Copy** button to the right of **KEY 1** to copy the access key to the clipboard. Copy the Endpoint URL, you may need to change the VisionServiceClient object in the code.
 
     ![Copying the access key](Images/copy-access-key.png)
 
     _Copying the access key_
 
-6. Return to the Function App in the Azure Portal and click the function name in the ribbon on the left. Then click **Platform features**, followed by **Application settings**. 
+6. Return to the Function App in the Azure Portal and click the function name in the ribbon on the left. Then click **Platform features**, followed by **Configuration**. 
 
-    ![Viewing application settings](Images/open-app-settings.png)
+    ![Viewing configuration](Images/open-app-settings.png)
 
-    _Viewing application settings_
+    _Viewing configuration_
 
 7. Scroll down to the "App settings" section. Add a new app setting named "SubscriptionKey" (without quotation marks), and paste the subscription key that is on the clipboard into the **Value** box. Then click **Save** at the top of the blade.
 
