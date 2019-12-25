@@ -5,13 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\css\site.css" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Include="wwwroot\css\site.css" />
     <None Include="wwwroot\css\bootstrap.css" />
     <None Include="wwwroot\css\bootstrap.min.css" />
-    <None Include="wwwroot\css\site.css" />
     <None Include="wwwroot\images\logo.png" />
   </ItemGroup>
 

@@ -1,11 +1,11 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "unique_name": {
-            "type": "string"
-        }
-    },
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "unique_name": {
+      "type": "string"
+    }
+  },
   "variables": {
     "WebSiteName": "[concat(parameters('unique_name'),'site')]",
     "DocumentDBName": "[concat(parameters('unique_name'),'docdb')]",
@@ -14,183 +14,189 @@
     "RepoUrl": "https://github.com/arnaudmaichac/functions-customer-reviews",
     "Branch": "master"
   },
-    "resources": [
-        {
-            "type": "Microsoft.CognitiveServices/accounts",
-            "sku": {
-                "name": "F0"
-            },
-            "kind": "ComputerVision",
-            "name": "[concat(parameters('unique_name'),'computervision')]",
-            "apiVersion": "2017-04-18",
-            "location": "[resourceGroup().location]",
-            "properties": {},
-            "dependsOn": []
+  "resources": [
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "sku": {
+        "name": "F0"
+      },
+      "kind": "ComputerVision",
+      "name": "[concat(parameters('unique_name'),'computervision')]",
+      "apiVersion": "2017-04-18",
+      "location": "[resourceGroup().location]",
+      "properties": {},
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "sku": {
+        "name": "F0"
+      },
+      "kind": "ContentModerator",
+      "name": "[concat(parameters('unique_name'),'contentmoderator')]",
+      "apiVersion": "2017-04-18",
+      "location": "[resourceGroup().location]",
+      "properties": {},
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "kind": "GlobalDocumentDB",
+      "name": "[variables('DocumentDBName')]",
+      "apiVersion": "2019-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session",
+          "maxIntervalInSeconds": 5,
+          "maxStalenessPrefix": 100
         },
-        {
-            "type": "Microsoft.CognitiveServices/accounts",
-            "sku": {
-                "name": "F0"
-            },
-            "kind": "ContentModerator",
-            "name": "[concat(parameters('unique_name'),'contentmoderator')]",
-            "apiVersion": "2017-04-18",
-            "location": "[resourceGroup().location]",
-            "properties": {},
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.DocumentDB/databaseAccounts",
-            "kind": "GlobalDocumentDB",
-            "name": "[variables('DocumentDBName')]",
-            "apiVersion": "2019-08-01",
-            "location": "[resourceGroup().location]",
-            "tags": {},
-            "properties": {
-                "databaseAccountOfferType": "Standard",
-                "consistencyPolicy": {
-                    "defaultConsistencyLevel": "Session",
-                    "maxIntervalInSeconds": 5,
-                    "maxStalenessPrefix": 100
-                },
-                "name": "[concat(parameters('unique_name'),'docdb')]"
-            },
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "sku": {
-                "name": "Standard_LRS",
-                "tier": "Standard"
-            },
-            "kind": "StorageV2",
-            "name": "[variables('StorageAccountName')]",
-            "apiVersion": "2018-07-01",
-            "location": "[resourceGroup().location]",
-            "tags": {},
-            "properties": {},
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Web/serverfarms",
-            "sku": {
-                "name": "S1",
-				"tier": "Standard"
-            },
-            "kind": "app",
-            "name": "[concat(parameters('unique_name'),'farm')]",
-            "apiVersion": "2018-02-01",
-            "location": "[resourceGroup().location]",
-            "properties": {},
-            "dependsOn": []
-        },
-        {
-            "type": "microsoft.insights/components",
-            "kind": "other",
-            "name": "[variables('AppInsightsInstanceName')]",
-            "apiVersion": "2014-04-01",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "ApplicationId": "[variables('AppInsightsInstanceName')]"
-            },
-            "dependsOn": []
-        },
-        {
-        "type": "Microsoft.Web/sites",
-        "name": "[variables('WebSiteName')]",
-        "apiVersion": "2018-02-01",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "name": "[concat(parameters('unique_name'),'site')]",
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]"
-        },
-        "dependsOn": [
-          "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
-          "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]",
-          "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('DocumentDBName'))]"
-        ],
-        "resources": [
-            {
-              "name": "appsettings",
-              "type": "config",
-              "apiVersion": "2015-08-01",
-              "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', variables('WebSiteName'))]"
-              ],
-              "properties": {
-                "documentDbEndpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('DocumentDBName'))).documentEndpoint]",
-                "documentDbKey": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocumentDBName')),  providers('Microsoft.DocumentDb', 'databaseAccounts').apiVersions[0]).primaryMasterKey]",
-                "documentDbName": "customerReviewData",
-                "documentDbColl": "reviews",
-                "storageAccountConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-                "containerName": "input-images",
-                "queueName": "review-queue",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components', variables('AppInsightsInstanceName')),  providers('Microsoft.Insights', 'components').apiVersions[0]).InstrumentationKey]",
-                "PROJECT": "Source\\csharp\\CatsReviewApp\\CatsReviewApp\\CatsReviewApp.csproj"
-              }
-            },
-            {
-              "name": "web",
-              "type": "sourcecontrols",
-              "apiVersion": "2018-02-01",
-              "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', variables('WebSiteName'))]",
-                "[resourceId('Microsoft.Web/sites/config', variables('WebSiteName'), 'appsettings')]"
-              ],
-              "properties": {
-                "repoUrl": "[variables('RepoUrl')]",
-                "branch": "[variables('Branch')]",
-                "isManualIntegration": true
-              }
-            }
-          ]
-        },
-      {
-        "apiVersion": "2015-08-01",
-        "name": "[concat(parameters('unique_name'),'function')]",
-        "type": "Microsoft.Web/sites",
-        "kind": "functionapp",
-        "location": "[resourceGroup().location]",
-        "dependsOn": [
-          "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
-          "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
-        ],
-        "properties": {
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
-          "siteConfig": {
-            "alwaysOn": true,
-            "appSettings": [
-              {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "~3"
-              }
-            ]
-          }
-        },
-        "resources": [
+        "name": "[concat(parameters('unique_name'),'docdb')]"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "StorageV2",
+      "name": "[variables('StorageAccountName')]",
+      "apiVersion": "2018-07-01",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {},
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard"
+      },
+      "kind": "app",
+      "name": "[concat(parameters('unique_name'),'farm')]",
+      "apiVersion": "2018-02-01",
+      "location": "[resourceGroup().location]",
+      "properties": {},
+      "dependsOn": []
+    },
+    {
+      "type": "microsoft.insights/components",
+      "kind": "other",
+      "name": "[variables('AppInsightsInstanceName')]",
+      "apiVersion": "2014-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "ApplicationId": "[variables('AppInsightsInstanceName')]"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('WebSiteName')]",
+      "apiVersion": "2018-02-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[concat(parameters('unique_name'),'site')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
+        "metadata": [
           {
-            "apiVersion": "2015-08-01",
-            "name": "appsettings",
-            "type": "config",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/Sites', concat(parameters('unique_name'),'function'))]",
-              "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-              "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('DocumentDBName'))]",
-              "[resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'computervision'))]",
-              "[resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'contentmoderator'))]"
-            ],
-            "properties": {
-              "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-              "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-              "MicrosoftVisionApiKey": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'computervision')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]",
-              "ContentModerationApiKey": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'contentmoderator')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]",
-              "AssetsLocation": "[resourceGroup().location]",
-              "customerReviewDataDocDB": "[concat('AccountEndpoint=',reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('DocumentDBName'))).documentEndpoint,';AccountKey=',listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocumentDBName')), providers('Microsoft.DocumentDb', 'databaseAccounts').apiVersions[0]).primaryMasterKey,';')]",
-              "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components', variables('AppInsightsInstanceName')),  providers('Microsoft.Insights', 'components').apiVersions[0]).InstrumentationKey]",
-              "queue-name": "review-queue"
-            }
+            "name": "CURRENT_STACK",
+            "value": "dotnetcore"
           }
         ]
-      }
-    ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]",
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('DocumentDBName'))]"
+      ],
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('WebSiteName'))]"
+          ],
+          "properties": {
+            "documentDbEndpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('DocumentDBName'))).documentEndpoint]",
+            "documentDbKey": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocumentDBName')),  providers('Microsoft.DocumentDb', 'databaseAccounts').apiVersions[0]).primaryMasterKey]",
+            "documentDbName": "customerReviewData",
+            "documentDbColl": "reviews",
+            "storageAccountConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+            "containerName": "input-images",
+            "queueName": "review-queue",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components', variables('AppInsightsInstanceName')),  providers('Microsoft.Insights', 'components').apiVersions[0]).InstrumentationKey]",
+            "PROJECT": "Source\\csharp\\CatsReviewApp\\CatsReviewApp\\CatsReviewApp.csproj"
+          }
+        },
+        {
+          "name": "web",
+          "type": "sourcecontrols",
+          "apiVersion": "2018-02-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('WebSiteName'))]",
+            "[resourceId('Microsoft.Web/sites/config', variables('WebSiteName'), 'appsettings')]"
+          ],
+          "properties": {
+            "repoUrl": "[variables('RepoUrl')]",
+            "branch": "[variables('Branch')]",
+            "isManualIntegration": true
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[concat(parameters('unique_name'),'function')]",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
+        "siteConfig": {
+          "alwaysOn": true,
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~3"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', concat(parameters('unique_name'),'function'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('DocumentDBName'))]",
+            "[resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'computervision'))]",
+            "[resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'contentmoderator'))]"
+          ],
+          "properties": {
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+            "MicrosoftVisionApiKey": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'computervision')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]",
+            "ContentModerationApiKey": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'contentmoderator')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]",
+            "AssetsLocation": "[resourceGroup().location]",
+            "customerReviewDataDocDB": "[concat('AccountEndpoint=',reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('DocumentDBName'))).documentEndpoint,';AccountKey=',listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocumentDBName')), providers('Microsoft.DocumentDb', 'databaseAccounts').apiVersions[0]).primaryMasterKey,';')]",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components', variables('AppInsightsInstanceName')),  providers('Microsoft.Insights', 'components').apiVersions[0]).InstrumentationKey]",
+            "queue-name": "review-queue"
+          }
+        }
+      ]
+    }
+  ]
 }
