@@ -14,9 +14,17 @@ namespace ContentModeratorFunction
 {
     public class AnalyzeImage
     {
+        private readonly TelemetryClient telemetryClient;
+
+        /// Using dependency injection will guarantee that you use the same configuration for telemetry collected automatically and manually.
+        public AnalyzeImage(TelemetryConfiguration telemetryConfiguration)
+        {
+            telemetryClient = new TelemetryClient(telemetryConfiguration);
+        }
+
         /// Function entry point. Review image and text and set inputDocument.isApproved.
         [FunctionName("ReviewImageAndText")]
-        public static async Task ReviewImageAndText(
+        public async Task ReviewImageAndText(
             [QueueTrigger("%queue-name%")]  ReviewRequestItem queueInput,
             [Blob("input-images/{BlobName}", FileAccess.Read)]  Stream image,
             [CosmosDB("customerReviewData", "reviews", Id = "{DocumentId}", PartitionKey = "Reviews", ConnectionStringSetting = "customerReviewDataDocDB")]  dynamic inputDocument)
@@ -45,7 +53,8 @@ namespace ContentModeratorFunction
 
         public static async Task<bool> PassesTextModeratorAsync(dynamic document)
         {
-            if (document.ReviewText == null) {
+            if (document.ReviewText == null)
+            {
                 return true;
             }
 
@@ -79,18 +88,17 @@ namespace ContentModeratorFunction
             public string BlobName { get; set; }
         }
 
-        private static void EmitCustomTelemetry(bool passesImage, bool passesText)
+        private void EmitCustomTelemetry(bool passesImage, bool passesText)
         {
-            TelemetryClient telemetry = new TelemetryClient();
-            string key = TelemetryConfiguration.Active.InstrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", EnvironmentVariableTarget.Process);
+            try
+            {
+                telemetryClient.Context.Operation.Name = "AnalyzeReview";
 
-            try {
-                telemetry.Context.Operation.Name = "AnalyzeReview";
+                telemetryClient.TrackMetric("ModerationResult", GetModerationResult(passesImage, passesText));
 
-                telemetry.TrackMetric("ModerationResult", GetModerationResult(passesImage, passesText));
-                
             }
-            catch {
+            catch
+            {
                 // avoid fail processing due to telemetry record saving issues
             }
         }
