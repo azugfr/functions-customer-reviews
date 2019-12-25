@@ -30,7 +30,7 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group">
-                    <label asp-for="Image" class="control-label col-md-2" />
+                    <label asp-for="Image" class="control-label col-md-2"></label>
                     <div class="col-md-10">
                         <input type="file" asp-for="Image" class="file-picker form-control" onchange="previewImage(this);" />
                         <label asp-for="Image" style="width: 100%">
@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="ReviewText" class="control-label col-md-2" />
+                    <label asp-for="ReviewText" class="control-label col-md-2"></label>
                     <div class="col-md-10">
                         <input type="text" class="form-control" asp-for="ReviewText" />
                         <span asp-validation-for="ReviewText" class="text-danger" />
