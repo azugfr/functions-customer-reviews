@@ -126,7 +126,7 @@
                 "containerName": "input-images",
                 "queueName": "review-queue",
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components', variables('AppInsightsInstanceName')),  providers('Microsoft.Insights', 'components').apiVersions[0]).InstrumentationKey]",
-                "PROJECT": "Source\\csharp\\CatsReviewApp_Core\\CatsReviewApp\\CatsReviewApp.csproj"
+                "PROJECT": "Source\\csharp\\CatsReviewApp\\CatsReviewApp\\CatsReviewApp.csproj"
               }
             },
             {

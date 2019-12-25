@@ -8,11 +8,11 @@
     using Microsoft.Azure.Storage.Blob;
     using Microsoft.Azure.Storage.Queue;
     using Microsoft.Extensions.Configuration;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text.Json;
     using System.Threading.Tasks;
 
     public class ReviewProvider
@@ -79,7 +79,7 @@
             var queue = queueClient.GetQueueReference(this.queueName);
             var payload = new { BlobName = recordId.ToString(), DocumentId = recordId.ToString() };
            
-            queue.AddMessage(new CloudQueueMessage(JsonSerializer.Serialize(payload)));
+            queue.AddMessage(new CloudQueueMessage(JsonConvert.SerializeObject(payload)));
             return recordId;
         }
 
