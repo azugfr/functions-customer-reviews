@@ -266,22 +266,7 @@ You can expand the release to also create or update all the assets before deploy
 2. In Release definition, add a new `Azure Resource Group Deployment`task. Set it to update your assets as detailed in [automate resource deployment of Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/functions-infrastructure-as-code)
 
 
-
-
-The work of writing, configuring and deploy the Azure Function is complete. Now comes the fun part: testing it out and monitor it.
-
-<a name="Exercise4"></a>
-## Exercise 4: Create custom query and use dashboard of Application Insights ##
-
-Your function is configured to listen for changes to the blob container named "uploaded". Each time an image appears in the container, the function executes and passes the image to the Computer Vision API for analysis. To test the function, you simply upload images to the CustomerReviews site. In this exercise, you will explore how Application Insights custom telemetry can be surfaced on Azure Dashboard along with overall telemetry from the demo website.
-
-| Screen                         | Steps                                    | Script                                   |
-| ------------------------------ | ---------------------------------------- | ---------------------------------------- |
-|                                | Point out in the code the ``EmitCustomTelemetry`` call.<p>Show the ``EmitCustomTelemetry`` method code.<p>Change to Azure Portal tab in the browser | In addition to the best development tooling and great integration with Visual Studio Team Services, we can take advantage of Application Insights to easily build custom telemetry into your application. You will see that with a few lines of code I am collecting and storing application telemetry for deep insights and analysis. So let's switch to the Azure Portal to see this in action against our production website. |
-| ![](../../Media/Picture17.png) | (in the shared Reviews Insights dashboard) Mouse over the donut wheel.<p>Hover over a couple of areas of the donut.<p>Hover over the application map.<p>Click on edit query in the donut or tab to already opened tab | When we go to the Azure portal we have rich visualizations and deep insights about how your app and your function are performing in a shared dashboard used by my team. You can see how many Reviews have been approved or rejected and why. You can also see how many calls are being made to my site, Azure Function, and their dependencies, and the latency of these calls. And if you need to you can drill into the specifics of your telemetry using Application Insights Analytics |
-| ![](../../Media/Picture18.png) | Change the type of query result to ``barchart``<p>Click Go to run the query again. | Here you can drill in to individual requests, aggregate your results in a different way. You can change the view type and re-run the query. You can export it to our Azure Portal dashboard as you saw, or use this as a source in Power BI. |
-
-You can continue to explore Application Insights and change the dashboard.
+The work of writing, configuring and deploy the Azure Function is complete.
 
 
 <a name="Summary"></a>
@@ -292,7 +277,6 @@ In this hands-on lab you learned how to:
 - Create a VSTS account and a new Team project
 - Create a fork of a Github repository and a new PAT to access this repository
 - Create a new pipeline with a Build and a Release definitions to continuously deliver an Azure Function
-- Use Application Insights to follow solution health and follow your custom metrics.
 
 This is just one example of how you can leverage VSTS and Application Insights. Experiment with other application deployment, you may want to add CustomerReviews site alonside the Azure Function. You could also leverage Azure Web apps capabilities like Slots to launch integrations tests before, or add an intermediate environment before production one like in this [blog post](https://blogs.msdn.microsoft.com/visualstudioalmrangers/2017/10/04/azure-function-ci-cd-devops-pipeline/).
 You could also explore [Azure DevOps Projects](https://go.microsoft.com/fwlink/?linkid=862126) to rapidly kickstart your project.

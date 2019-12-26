@@ -10,15 +10,21 @@ using System.Threading.Tasks;
 
 namespace ContentModeratorFunction
 {
-    public static class AnalyzeImage
+    public class AnalyzeImage
     {
-        private static readonly string ContentModeratorApiUri = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
-        private static readonly string ComputerVisionApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/vision/v1.0";
+        private static readonly string CognitiveServicesApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com";
+        private readonly string ContentModeratorApiUri = $"{CognitiveServicesApiRoot}/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
+        private readonly string SearchTag = "cat";
 
-        private static readonly string SearchTag = "cat";
+        private readonly HttpClient httpClient;
+
+        public AnalyzeImage(IHttpClientFactory httpClientFactory)
+        {
+            httpClient = httpClientFactory.CreateClient();
+        }
 
         [FunctionName("ReviewImageAndText")]
-        public static async Task Run(
+        public async Task Run(
             [QueueTrigger("review-queue")] ReviewRequestItem queueInput,
             [Blob("input-images/{BlobName}", FileAccess.Read)] Stream image,
             [CosmosDB("customerReviewData", "reviews", Id = "{DocumentId}", PartitionKey = "Reviews", ConnectionStringSetting = "customerReviewDataDocDB")] dynamic inputDocument)
@@ -37,37 +43,36 @@ namespace ContentModeratorFunction
             public string BlobName { get; set; }
         }
 
-        public static async Task<bool> PassesTextModeratorAsync(dynamic document)
+        public async Task<bool> PassesTextModeratorAsync(dynamic document)
         {
             if (document.ReviewText == null)
             {
                 return true;
             }
 
-            using (HttpClient httpClient = new HttpClient())
-            {
-                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Environment.GetEnvironmentVariable("ContentModerationApiKey"));
+            httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Environment.GetEnvironmentVariable("ContentModerationApiKey"));
 
-                var stringContent = new StringContent(document.ReviewText);
-                var response = await httpClient.PostAsync(ContentModeratorApiUri, stringContent);
+            var stringContent = new StringContent(document.ReviewText);
+            var response = await httpClient.PostAsync(ContentModeratorApiUri, stringContent);
 
-                response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
-                JObject data = JObject.Parse(await response.Content.ReadAsStringAsync());
-                JToken token = data["Terms"];
+            JObject data = JObject.Parse(await response.Content.ReadAsStringAsync());
+            JToken token = data["Terms"];
 
-                //If we have Terms in result it failed the moderation (Terms will have the bad terms)
-                return !token.HasValues;
-            }
+            //If we have Terms in result it failed the moderation (Terms will have the bad terms)
+            return !token.HasValues;
         }
 
-        public static async Task<(bool, string)> PassesImageModerationAsync(Stream image)
+        public async Task<(bool, string)> PassesImageModerationAsync(Stream image)
         {
-        var client = new ComputerVisionClient(
-            new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("MicrosoftVisionApiKey")),
-            new DelegatingHandler[] { });
+            var client = new ComputerVisionClient(
+                new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("MicrosoftVisionApiKey")),
+                httpClient,
+                false);
 
-        var result = await client.AnalyzeImageInStreamAsync(image, new[] { VisualFeatureTypes.Description });
+            client.Endpoint = CognitiveServicesApiRoot;
+            var result = await client.AnalyzeImageInStreamAsync(image, new[] { VisualFeatureTypes.Description });
 
             bool containsCat = result.Description.Tags.Take(5).Contains(SearchTag);
             string message = result.Description?.Captions.FirstOrDefault()?.Text;

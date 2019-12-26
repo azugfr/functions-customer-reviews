@@ -15,7 +15,7 @@ It performs then an automated analysis of the image using the Microsoft Cognitiv
 
 In this hands-on lab, you will learn how to:
 
-- Create an Azure Function App from Visual Studio 2017
+- Create an Azure Function App from Visual Studio
 - Write an Azure Function that uses a queue trigger, a blob storage input and a Cosmos DB document input.
 - Add application settings to an Azure Function App
 - Use Microsoft Cognitive Services to analyze a text and an image and store the results in a Cosmos DB document
@@ -26,7 +26,7 @@ In this hands-on lab, you will learn how to:
 In order to complete this hands-on-lab, it is required to have:
 
 - An active Microsoft Azure subscription. If you don't have one, [sign up for a free trial](http://aka.ms/WATK-FreeTrial).
-- [Visual Studio 2017 15.3 (or later)](https://www.visualstudio.com/fr/downloads/)
+- [Visual Studio 2017 15.3 (or later)](https://www.visualstudio.com/downloads/)
 - Visual Studio 2017 Tools for Azure Functions (available by installing the "Azure development" workload)
 
 ---
@@ -47,14 +47,11 @@ Estimated time to complete this lab: **60** minutes.
 
 In this exercise, you will write C# code that uses the [Computer Vision API](https://www.microsoft.com/cognitive-services/en-us/computer-vision-api) to analyze images added to the "input-images" container and the [Content Moderator API](https://azure.microsoft.com/en-us/services/cognitive-services/content-moderator/) to analyse the review text of the Cosmos DB document.
 
-1. From VS2017, create a new project by choosing **File -> New Project**, and the **Azure Functions** project type. Call it ContentModeratorFunction.
-
-![New Azure Function project](../../../Media/new_azure_function_project.png)
+1. From Visual Studio, create a new project by choosing **File -> New Project**, and the **Azure Functions** project type. Call it ContentModeratorFunction.
 
 2. On the template dialog, configure your function as followed:
-- Select **Azure Functions v2 (.NET Standard)** in the dropdown list
+- Select **Azure Functions v3 (.NET Core)** in the dropdown list
 - Select **Queue Trigger**
-- Set the **Storage Account** to the one you have created at the beginning of this hands-on-lab
 - Set the **Path** to **review-queue**
 
 ![Azure Function template](../../../Media/azure_function_template.png)
@@ -68,9 +65,8 @@ This generates a new project which contains the following files:
 
 4. The **FunctionName** attribute on the method sets the name of the function. Change it to **ReviewImageAndText**.
 
-5. Install the NuGet packages **Microsoft.Azure.WebJobs.Extensions.Storage** and **Microsoft.Azure.WebJobs.Extensions.CosmosDB**
+5. Install the NuGet package **Microsoft.Azure.WebJobs.Extensions.CosmosDB**
 	```
-	PM> Install-Package Microsoft.Azure.WebJobs.Extensions.Storage
 	PM> Install-Package Microsoft.Azure.WebJobs.Extensions.CosmosDB
 	```
 
@@ -94,10 +90,10 @@ This generates a new project which contains the following files:
 	{
 		public static class AnalyzeImage
 		{
-			private static readonly string ContentModeratorApiUri = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
-			private static readonly string ComputerVisionApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/vision/v1.0";
-
-			private static readonly string SearchTag = "cat";
+			private static readonly string CognitiveServicesApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com";
+			private readonly string ContentModeratorApiUri = $"{CognitiveServicesApiRoot}/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
+			
+			private readonly string SearchTag = "cat";
 			
 			[FunctionName("ReviewImageAndText")]
 			public static async Task Run(
@@ -161,6 +157,8 @@ As you can see, the function has a queue trigger, a Blob storage input and a Cos
         var client = new ComputerVisionClient(
             new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("MicrosoftVisionApiKey")),
             new DelegatingHandler[] { });
+			
+		client.Endpoint = CognitiveServicesApiRoot;
 
         var result = await client.AnalyzeImageInStreamAsync(image, new[] { VisualFeatureTypes.Description });
 
@@ -207,7 +205,7 @@ You are done with the coding part of this lab!
 * **AzureWebJobsStorage**: Connection string to the storage account
 * **MicrosoftVisionApiKey**: Computer Vision Api Key
 * **ContentModerationApiKey**: Content Moderation Api Key 
-* **AssetsLocation**: Location of the Cognitive Services (westeurope)
+* **AssetsLocation**: Location of the Cognitive Services (Example: westeurope)
 * **customerReviewDataDocDB**: Cosmos DB connection string
 
 3. Press F5 to test your function. If prompted, accept the request from Visual Studio to download and install Azure Functions Core (CLI) tools.
@@ -224,7 +222,7 @@ Have a look at the logs of your function in the command prompt, you should see *
 
 2. In the Create App Service dialog, fill in all information and click **Create** to create a function app and related resources in Azure with these settings and deploy your function project code.
 
-3. After the deployment is complete, go to the **Azure Portal**, go to the function app which has just been created and add the following settings in the Application Settings:
+3. After the deployment is complete, go to the **Azure Portal**, go to the function app which has just been created and check the following settings in the Application Settings:
 
 * **AzureWebJobsStorage**: Connection string to the storage account
 * **ContentModerationApiKey**: Content Moderation Api Key 

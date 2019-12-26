@@ -14,11 +14,11 @@ _View of the architecture of the sample_
   - [directly in Azure portal with Csharp script](doc/01%20-%20Portal/Azure%20Functions%20HOL%20(C%23).md)
   - [directly in Azure portal with Javascript](./doc/01%20-%20Portal/Azure%20Functions%20HOL%20(JavaScript).md)
 
-- [Lab 00:](doc/00%20-%20Provision%20resources%20and%20Reset) In this lab, you will create assets listed in the architecture sample above with Azure Cloud Shell (Powershell). The created Azure Services are prerequisites to execute lab 02 and lab 03.
-- [Lab 02:](doc/02%20-%20Visual%20Studio) In this lab, you willcreate an Azure Function to perform automated moderation of customer reviews using Microsoft Cognitive Services
-  - [with Visual Code and TypeScript](./doc/02%20-%20Visual%20Studio/VS%20Code%20and%20TypeScript) 
+- [Lab 00:](doc/00%20-%20Provision%20resources%20and%20Reset) In this lab, you will create assets listed in the architecture sample above with Azure Cloud Shell (Powershell). The created Azure Services are prerequisites to execute lab 02.
+- [Lab 02:](doc/02%20-%20Visual%20Studio) In this lab, you will create an Azure Function to perform automated moderation of customer reviews using Microsoft Cognitive Services
+  - [with Visual Studio Code and TypeScript](./doc/02%20-%20Visual%20Studio/VS%20Code%20and%20TypeScript) 
   - [with Visual Studio 2017 and Csharp](./doc/02%20-%20Visual%20Studio/VS2017%20and%20C%23) 
-- [Lab 03:](./doc/03%20-%20Continuous%20Delivery) In this lab, you will create a Continuous Deployment of an Azure Function and use a custom telemetry for Application Insights. (under construction)
+- [Lab 03:](./doc/03%20-%20Continuous%20Delivery) In this lab, you will create a Continuous Deployment of an Azure Function.
 
 ## Deliver as a Demo ##
 
