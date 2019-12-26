@@ -4,7 +4,7 @@ namespace CatsReviewApp.Components
 {
     public class StatusLabelViewComponent : ViewComponent
     {
-        public IViewComponentResult InvokeAsync(bool? isApproved)
+        public IViewComponentResult Invoke(bool? isApproved)
         {
             return View(isApproved);
         }

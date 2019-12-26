@@ -12,8 +12,8 @@ namespace ContentModeratorFunction
 {
     public class AnalyzeImage
     {
-        private readonly string ContentModeratorApiUri = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
-        private readonly string ComputerVisionApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/vision/v1.0";
+        private static readonly string CognitiveServicesApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com";
+        private readonly string ContentModeratorApiUri = $"{CognitiveServicesApiRoot}/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
         private readonly string SearchTag = "cat";
 
         private readonly HttpClient httpClient;
@@ -68,8 +68,10 @@ namespace ContentModeratorFunction
         {
             var client = new ComputerVisionClient(
                 new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("MicrosoftVisionApiKey")),
-                new DelegatingHandler[] { });
+                httpClient,
+                false);
 
+            client.Endpoint = CognitiveServicesApiRoot;
             var result = await client.AnalyzeImageInStreamAsync(image, new[] { VisualFeatureTypes.Description });
 
             bool containsCat = result.Description.Tags.Take(5).Contains(SearchTag);

@@ -1,2 +1,4 @@
 {
+  "version": "2.0",
+  "queues": { "maxPollingInterval": 200 }
 }

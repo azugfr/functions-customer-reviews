@@ -14,11 +14,12 @@ namespace ContentModeratorFunction
 {
     public class AnalyzeImage
     {
+        private readonly HttpClient httpClient;
         private readonly TelemetryClient telemetryClient;
 
-        /// Using dependency injection will guarantee that you use the same configuration for telemetry collected automatically and manually.
-        public AnalyzeImage(TelemetryConfiguration telemetryConfiguration)
+        public AnalyzeImage(IHttpClientFactory httpClientFactory, TelemetryConfiguration telemetryConfiguration)
         {
+            httpClient = httpClientFactory.CreateClient();
             telemetryClient = new TelemetryClient(telemetryConfiguration);
         }
 
@@ -38,20 +39,23 @@ namespace ContentModeratorFunction
             EmitCustomTelemetry(containsCat, passesText);
         }
 
-        public static async Task<(bool, string)> PassesImageModerationAsync(Stream image)
+        private async Task<(bool, string)> PassesImageModerationAsync(Stream image)
         {
             var client = new ComputerVisionClient(
                 new ApiKeyServiceClientCredentials(ApiKey),
-                new DelegatingHandler[] { });
+                httpClient,
+                false);
 
+            client.Endpoint = ApiRoot;
             var result = await client.AnalyzeImageInStreamAsync(image, VisualFeatures);
 
             bool containsCat = result.Description.Tags.Take(5).Contains(SearchTag);
             string message = result?.Description?.Captions.FirstOrDefault()?.Text;
+
             return (containsCat, message);
         }
 
-        public static async Task<bool> PassesTextModeratorAsync(dynamic document)
+        private async Task<bool> PassesTextModeratorAsync(dynamic document)
         {
             if (document.ReviewText == null)
             {
@@ -74,11 +78,10 @@ namespace ContentModeratorFunction
 
         #region Helpers
 
-        private static string ApiUri = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
         private static readonly string SearchTag = "cat";
-        private static readonly string ApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com/vision/v1.0";
+        private static readonly string ApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com";
+        private static string ApiUri = $"{ApiRoot}/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
         private static readonly string ApiKey = Environment.GetEnvironmentVariable("MicrosoftVisionApiKey");
-        static HttpClient httpClient = new HttpClient();
 
         private static readonly VisualFeatureTypes[] VisualFeatures = { VisualFeatureTypes.Description };
 
