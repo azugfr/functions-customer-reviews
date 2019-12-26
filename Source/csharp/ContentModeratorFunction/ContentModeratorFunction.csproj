@@ -10,7 +10,6 @@
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.0" />
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.14" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.5" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="3.0.14" />
