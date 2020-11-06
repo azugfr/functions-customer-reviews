@@ -8,26 +8,13 @@ param(
     $uniqueKey
 )
 
-# sign in
-if ([string]::IsNullOrEmpty($(Get-AzureRmContext).Account))
-{
-    Write-Host "Logging in...";
-    Login-AzureRmAccount;
-}
-
-$storageKey=Get-AzureRmStorageAccountKey -ResourceGroupName $resourceGroup `
-                                         -AccountName $uniqueKey'stor' `
-            | Select-Object -first 1
+$storageKey=az storage account keys list -g $resourceGroup -n $uniqueKey'stor' --query [0].value
 $storageConnection="DefaultEndpointsProtocol=https;AccountName=$($uniqueKey)stor;AccountKey=$($storageKey.Value);EndpointSuffix=core.windows.net"
+
 $docdbUri="https://$($uniqueKey)docdb.documents.azure.com:443/"
-$docdbKey=Invoke-AzureRmResourceAction -Action listKeys `
-              -ResourceType 'Microsoft.DocumentDb/databaseAccounts' `
-              -ResourceGroupName $resourceGroup `
-              -Name $uniqueKey'docdb' `
-			  -Force `
-          | Select-Object -first 1
+$docdbKey=(az cosmosdb keys list -g $resourceGroup -n $uniqueKey'docdb' | ConvertFrom-Json)
 
 (Get-Content $PSScriptRoot\config.xml) -replace "YOURSTORAGECONNECTIONSTRING",$storageConnection `
-                           -replace "YOURCOSMOSDBENDPOINT",$docdbUri `
-                           -replace "YOURCOSMOSDBKEY",$docdbKey.primaryMasterKey `
+                                       -replace "YOURCOSMOSDBENDPOINT",$docdbUri `
+                                       -replace "YOURCOSMOSDBKEY",$docdbKey.primaryMasterKey `
 | Set-Content $PSScriptRoot\config.xml
