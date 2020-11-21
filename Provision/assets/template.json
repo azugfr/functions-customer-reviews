@@ -52,8 +52,7 @@
           "defaultConsistencyLevel": "Session",
           "maxIntervalInSeconds": 5,
           "maxStalenessPrefix": 100
-        },
-        "name": "[concat(parameters('unique_name'),'docdb')]"
+        }
       },
       "dependsOn": []
     },
@@ -101,7 +100,6 @@
       "apiVersion": "2018-02-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "name": "[concat(parameters('unique_name'),'site')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
         "metadata": [
           {
@@ -132,7 +130,7 @@
             "containerName": "input-images",
             "queueName": "review-queue",
             "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components', variables('AppInsightsInstanceName')),  providers('Microsoft.Insights', 'components').apiVersions[0]).InstrumentationKey]",
-            "PROJECT": "Source\\csharp\\CatsReviewApp\\CatsReviewApp\\CatsReviewApp.csproj"
+            "PROJECT": "src\\CatsReviewApp\\CatsReviewApp.csproj"
           }
         },
         {
@@ -159,7 +157,10 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]",
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('DocumentDBName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'computervision'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'contentmoderator'))]"
       ],
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('unique_name'),'farm'))]",
@@ -167,36 +168,48 @@
           "alwaysOn": true,
           "appSettings": [
             {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+            },
+            {
+              "name": "AzureWebJobsTableStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('Microsoft.Insights/components', variables('AppInsightsInstanceName')),  providers('Microsoft.Insights', 'components').apiVersions[0]).InstrumentationKey]"
+            },
+            {
               "name": "FUNCTIONS_EXTENSION_VERSION",
               "value": "~3"
+            },
+            {
+              "name": "WEBSITE_WEBDEPLOY_USE_SCM",
+              "value": "true"
+            },
+            {
+              "name": "MicrosoftVisionApiKey",
+              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'computervision')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]"
+            },
+            {
+              "name": "ContentModerationApiKey",
+              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'contentmoderator')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]"
+            },
+            {
+              "name": "AssetsLocation",
+              "value": "[resourceGroup().location]"
+            },
+            {
+              "name": "customerReviewDataDocDB",
+              "value": "[concat('AccountEndpoint=',reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('DocumentDBName'))).documentEndpoint,';AccountKey=',listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocumentDBName')), providers('Microsoft.DocumentDb', 'databaseAccounts').apiVersions[0]).primaryMasterKey,';')]"
+            },
+            {
+              "name": "queueName",
+              "value": "review-queue"
             }
           ]
         }
-      },
-      "resources": [
-        {
-          "apiVersion": "2015-08-01",
-          "name": "appsettings",
-          "type": "config",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', concat(parameters('unique_name'),'function'))]",
-            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-            "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('DocumentDBName'))]",
-            "[resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'computervision'))]",
-            "[resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'contentmoderator'))]"
-          ],
-          "properties": {
-            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-            "MicrosoftVisionApiKey": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'computervision')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]",
-            "ContentModerationApiKey": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', concat(parameters('unique_name'),'contentmoderator')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]",
-            "AssetsLocation": "[resourceGroup().location]",
-            "customerReviewDataDocDB": "[concat('AccountEndpoint=',reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('DocumentDBName'))).documentEndpoint,';AccountKey=',listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocumentDBName')), providers('Microsoft.DocumentDb', 'databaseAccounts').apiVersions[0]).primaryMasterKey,';')]",
-            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components', variables('AppInsightsInstanceName')),  providers('Microsoft.Insights', 'components').apiVersions[0]).InstrumentationKey]",
-            "queue-name": "review-queue"
-          }
-        }
-      ]
+      }
     }
   ]
 }

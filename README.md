@@ -20,12 +20,6 @@ _View of the architecture of the sample_
   - [with Visual Studio 2017 and Csharp](./doc/02%20-%20Visual%20Studio/VS2017%20and%20C%23) 
 - [Lab 03:](./doc/03%20-%20Continuous%20Delivery) In this lab, you will create a Continuous Deployment of an Azure Function.
 
-## Deliver as a Demo ##
-
-Please [follow the Setup Instructions](SETUP.md) to get your environment configured.
-
-Here is the [demo script](DEMOSCRIPT.md).
-
 ## Contributing ##
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

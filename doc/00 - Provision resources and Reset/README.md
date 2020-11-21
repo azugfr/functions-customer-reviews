@@ -242,7 +242,7 @@ Your website is configured to get images from CosmosDB collections that you crea
 4. Type this command
 
     ```powershell
-    .\Reset.cmd
+    ./setup/reset.azure.ps1 config.xml 
     ```
 
     > There may be some errors during cleaning as there are no collection in
