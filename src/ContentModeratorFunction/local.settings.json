@@ -7,7 +7,7 @@
     "AssetsLocation": "__AssetsLocation__",
     "customerReviewDataDocDB": "__customerReviewDataDocDB__",
     "APPINSIGHTS_INSTRUMENTATIONKEY": "__APPINSIGHTS_INSTRUMENTATIONKEY__",
-    "queue-name": "review-queue"
+    "queueName": "review-queue"
   },
   "ConnectionStrings": {}
 }

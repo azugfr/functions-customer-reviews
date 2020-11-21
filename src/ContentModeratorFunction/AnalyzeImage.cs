@@ -35,7 +35,7 @@ namespace ContentModeratorFunction
         /// Function entry point. Review image and text and set inputDocument.isApproved.
         [FunctionName("ReviewImageAndText")]
         public async Task ReviewImageAndText(
-            [QueueTrigger("%queue-name%")] ReviewRequestItem queueInput,
+            [QueueTrigger("%queueName%")] ReviewRequestItem queueInput,
             [Blob("input-images/{BlobName}", FileAccess.Read)] Stream image,
             [CosmosDB("customerReviewData", "reviews", Id = "{DocumentId}", PartitionKey = "Reviews", ConnectionStringSetting = "customerReviewDataDocDB")] dynamic inputDocument)
         {

@@ -160,7 +160,7 @@ As you can see, the function has a queue trigger, a Blob storage input and a Cos
 			
 		client.Endpoint = CognitiveServicesApiRoot;
 
-        var result = await client.AnalyzeImageInStreamAsync(image, new[] { VisualFeatureTypes.Description });
+        var result = await client.AnalyzeImageInStreamAsync(image, new VisualFeatureTypes?[] { VisualFeatureTypes.Description });
 
 		bool containsCat = result.Description.Tags.Take(5).Contains(SearchTag);
 		string message = result.Description?.Captions.FirstOrDefault()?.Text;
