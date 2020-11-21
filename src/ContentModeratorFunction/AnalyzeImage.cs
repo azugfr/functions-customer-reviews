@@ -1,10 +1,12 @@
-﻿using Microsoft.ApplicationInsights;
+﻿using ContentModeratorFunction.Models;
+using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -14,6 +16,13 @@ namespace ContentModeratorFunction
 {
     public class AnalyzeImage
     {
+        private static readonly string SearchTag = "cat";
+        private static readonly string ApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com";
+        private static readonly string ApiUri = $"{ApiRoot}/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
+        private static readonly string ApiKey = Environment.GetEnvironmentVariable("MicrosoftVisionApiKey");
+
+        private static readonly List<VisualFeatureTypes?> VisualFeatures = new List<VisualFeatureTypes?> { VisualFeatureTypes.Description };
+
         private readonly HttpClient httpClient;
         private readonly TelemetryClient telemetryClient;
 
@@ -26,9 +35,9 @@ namespace ContentModeratorFunction
         /// Function entry point. Review image and text and set inputDocument.isApproved.
         [FunctionName("ReviewImageAndText")]
         public async Task ReviewImageAndText(
-            [QueueTrigger("%queue-name%")]  ReviewRequestItem queueInput,
-            [Blob("input-images/{BlobName}", FileAccess.Read)]  Stream image,
-            [CosmosDB("customerReviewData", "reviews", Id = "{DocumentId}", PartitionKey = "Reviews", ConnectionStringSetting = "customerReviewDataDocDB")]  dynamic inputDocument)
+            [QueueTrigger("%queue-name%")] ReviewRequestItem queueInput,
+            [Blob("input-images/{BlobName}", FileAccess.Read)] Stream image,
+            [CosmosDB("customerReviewData", "reviews", Id = "{DocumentId}", PartitionKey = "Reviews", ConnectionStringSetting = "customerReviewDataDocDB")] dynamic inputDocument)
         {
             bool passesText = await PassesTextModeratorAsync(inputDocument);
 
@@ -44,9 +53,11 @@ namespace ContentModeratorFunction
             var client = new ComputerVisionClient(
                 new ApiKeyServiceClientCredentials(ApiKey),
                 httpClient,
-                false);
+                false)
+            {
+                Endpoint = ApiRoot
+            };
 
-            client.Endpoint = ApiRoot;
             var result = await client.AnalyzeImageInStreamAsync(image, VisualFeatures);
 
             bool containsCat = result.Description.Tags.Take(5).Contains(SearchTag);
@@ -77,19 +88,6 @@ namespace ContentModeratorFunction
         }
 
         #region Helpers
-
-        private static readonly string SearchTag = "cat";
-        private static readonly string ApiRoot = $"https://{Environment.GetEnvironmentVariable("AssetsLocation")}.api.cognitive.microsoft.com";
-        private static string ApiUri = $"{ApiRoot}/contentmoderator/moderate/v1.0/ProcessText/Screen?language=eng";
-        private static readonly string ApiKey = Environment.GetEnvironmentVariable("MicrosoftVisionApiKey");
-
-        private static readonly VisualFeatureTypes[] VisualFeatures = { VisualFeatureTypes.Description };
-
-        public class ReviewRequestItem
-        {
-            public string DocumentId { get; set; }
-            public string BlobName { get; set; }
-        }
 
         private void EmitCustomTelemetry(bool passesImage, bool passesText)
         {
